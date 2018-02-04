@@ -1,0 +1,12 @@
+language: generic
+
+os:
+    - linux
+
+before_install:
+    - sudo apt-get update && sudo apt-get install -y curl bsdtar git
+    - cd tests
+
+
+script: 
+    - ./test.sh
