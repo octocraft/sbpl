@@ -6,7 +6,7 @@
 
     export OS="linux"
     export ARCH="amd64"
-    target="sbpl-master-${OS}-${ARCH}"
+    target="sbpl-master"
 
     # Get copy
     cp --dereference sbpl.sh.base sbpl.sh

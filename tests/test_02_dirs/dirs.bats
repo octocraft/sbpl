@@ -10,7 +10,7 @@ function curl () {
 
 export OS=""
 export ARCH=""
-export target="test-0.0.0-${OS}-${ARCH}"
+export target="test-0.0.0"
 export -f bsdtar
 export -f curl
 export BATS_TEST_DIRNAME
