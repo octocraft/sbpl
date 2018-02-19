@@ -1,17 +1,17 @@
 #!/bin/bash
 
-name="Simple Bash Package Loader"
-version="1.0.0"
+sbpl_name="Simple Bash Package Loader"
+export sbpl_version="0.2.0"
 
 export sbpl=$0
 export sbpl_pkg="sbpl-pkg.sh"
-export sbpl_pkg_dir="vendor"
-export sbpl_pkg_dir_bin="$sbpl_pkg_dir/bin"
-export sbpl_pkg_dir_tmp="$sbpl_pkg_dir/tmp"
+export sbpl_dir_pkgs="vendor"
+export sbpl_dir_bins="$sbpl_dir_pkgs/bin"
+export sbpl_dir_tmps="$sbpl_dir_pkgs/tmp"
 
 #######################################
 
-export_platform_info() {
+function export_platform_info () {
 
     if [ -z ${OS+x} ]; then
         case "$OSTYPE" in
@@ -30,7 +30,7 @@ export_platform_info() {
 
         export OS
     fi
-    
+
     if [ -z ${ARCH+x} ]; then
         case "$HOSTTYPE" in
             arm64*)     ARCH="arm64"        ;;
@@ -50,17 +50,16 @@ export_platform_info() {
     fi
 }
 
-export_script_info () {
-    
-    if ! [ -z sbpl_dir ]; then
-        sbpl_dir_realtive=${0%/*}
-        export sbpl_dir=$(pwd)$([ ! -z "$sbpl_dir_realtive" ] && printf "%s" "/$sbpl_dir_realtive")
-    fi
+function sbpl_locations () {
+
+    export sbpl_dir_pkg="$sbpl_dir_pkgs/$OS/$ARCH"
+    export sbpl_dir_bin="$sbpl_dir_bins/$OS/$ARCH"
+    export sbpl_dir_tmp="$sbpl_dir_tmps/$OS/$ARCH"
 }
 
-sbpl_get () {
+function sbpl_get () {
 
-    check_dependency () {
+    function check_dependency () {
 
         if ! command -v "$1" > /dev/null; then
             printf "Dependency '$1' not found\n" 1>&2
@@ -68,7 +67,7 @@ sbpl_get () {
         fi
     }
 
-    display_progress () {
+    function display_progress () {
 
         max=72
         total=$(if [ "$1" -le 0 ]; then echo 1; else echo "$1"; fi)
@@ -101,8 +100,8 @@ sbpl_get () {
         printf "\n"
     }
     
-    sbpl_usage () 
-    {
+    function sbpl_usage () {
+
         printf "Usage: sbpl_get 'target'\n" 1>&2
         printf "file    'name' 'version'    'url'\n" 1>&2
         printf "archive 'name' 'version'    'url' 'bin_dir'\n" 1>&2
@@ -130,28 +129,31 @@ sbpl_get () {
     url=$(eval "printf $4")
 
     if [ "$#" -ge 5 ]; then
-        bin_dir=$(eval "printf $5")
+        src_bin_dir=$(eval "printf $5")
     else
-        bin_dir=""
+        src_bin_dir=""
     fi
 
-    package="${name}-${version}-${OS}-${ARCH}"
+    # Update Locations
+    sbpl_locations
+
+    package="${name}-${version}"
+    destination="$sbpl_dir_pkg/$package"
 
     # Check if package is present
-    if [ ! -d "$sbpl_pkg_dir/$package" ] ; then
+    if [ ! -d "$destination" ] ; then
 
         printf "Get package: $package\n"
 
-        destination="$sbpl_pkg_dir/$package"
         mkdir -p "$destination"
 
-        bindir=$(pwd)/$sbpl_pkg_dir/$package/$bin_dir
-        binfile=$bindir/$name
-
-
+        pkg_bin_dir=$(pwd)/$destination/$src_bin_dir
+        pkg_bin_file=$pkg_bin_dir/$name
+        
         if [ "$target" = "file" ] || [ "$target" = "archive" ]; then
 
-            tmpfile="$sbpl_pkg_dir_tmp/$package"
+            mkdir -p "$sbpl_dir_tmp"
+            tmpfile="$sbpl_dir_tmp/$package"
            
             curl -fSL# "$url" -o "$tmpfile" 2>&1
             if [ "$?" -ne 0 ]; then
@@ -170,8 +172,8 @@ sbpl_get () {
                     return 1
                 fi
             else
-                mkdir -p "$bindir"
-                mv "$tmpfile" "$binfile"
+                mkdir -p "$pkg_bin_dir"
+                mv "$tmpfile" "$pkg_bin_file"
             fi
 
         elif [ "$target" = "git" ]; then
@@ -198,81 +200,91 @@ sbpl_get () {
             return 2
         fi
 
-        if ! [ -f "$binfile" ]; then
-            printf "Error while processing pacakge. $binfile not found\n" 1>&2
+        if ! [ -f "$pkg_bin_file" ]; then
+            printf "Error while processing package. $pkg_bin_file not found\n" 1>&2
             return 1
         fi
 
-        # Add to bin dir
-        chmod u+x "$binfile"
-        ln -sf "$binfile" "$sbpl_pkg_dir_bin/$name"
+        # Make executable
+        chmod u+x "$pkg_bin_file"
+    
+        # Create link in bin dir
+        mkdir -p "$sbpl_dir_bin"
+        ln -sf "$pkg_bin_file" "$sbpl_dir_bin"
 
         if [ "$?" -ne 0 ]; then
-            printf "Error while creating symlink for target file in bin fodler\n" 1>&2
+            printf "Error while creating symlink for target file in bin folder\n" 1>&2
             return 1
         fi
     fi
 
 }
 
-function get_pakages () 
-{
+function get_packages () {
+
     # Get Packages
-    if [ -f "$sbpl_pkg" ]; then
-        command "./$sbpl_pkg"
+    if [ -f "$PWD/$sbpl_pkg" ]; then
+        command "$PWD/$sbpl_pkg"
         result=$?
+
+        # Clear tmp
+        rm -rf "$PWD/$sbpl_dir_tmp/*"
     else
         printf "'$sbpl_pkg' not found. quit.\n" 1>&2
         result=1
     fi
 
-    # Clear tmp
-    rm -rf "$sbpl_pkg_dir_tmp/*"
-
     return $result
 }
 
-function show_version () 
-{
-    printf "$name - $version\n"
+function show_version () {
+
+    printf "$sbpl_name - $sbpl_version\n"
     return 0
 }
 
-function usage () 
-{
+function usage () {
+
     printf "help    - print usage information\n"
     printf "update  - download packages\n"
     printf "upgrade - upgrade to latest sbpl version\n"
     printf "clean   - clear vendor dir\n"
     printf "version - print sbpl version information\n"
+    printf "envvars - print vars used by sbpl. Pass a var name to filter the list\n"
 
     return 0
 }
 
-function unknown_option () 
-{
+function unknown_option () {
+
     printf "$sbpl: Unknown option $1\n"
     printf "Use $sbpl help for help with command-line options,\n"
     printf "or see the online docs at https://github.com/octocraft/sbpl\n"
     return 2
 }
 
-function clean ()
-{
-    rm -rf "$sbpl_pkg_dir"
+function clean () {
+
+    rm -rf "$sbpl_dir_pkg"
     return $?
 }
 
-function upgrade () 
-{
+function upgrade () {
+
+    # Update Locations
+    sbpl_locations
+
     sbpl_get 'file' 'sbpl' 'master' 'https://raw.githubusercontent.com/octocraft/${name}/${version}/sbpl.sh'
-    cp "$sbpl_pkg_dir_bin/sbpl" "$sbpl_pkg_dir_tmp/sbpl.sh"
-    mv "$sbpl_pkg_dir_tmp/sbpl.sh" "$sbpl"    
+
+    mkdir -p "$sbpl_dir_tmp"
+    cp "$sbpl_dir_bin/sbpl" "$sbpl_dir_tmp/sbpl.sh"
+    mv "$sbpl_dir_tmp/sbpl.sh" "$sbpl"    
+
     return $?
 }
 
-function init ()
-{
+function init () {
+
     if [ -f "$sbpl_pkg" ]; then
         printf "$sbpl_pkg already exists\n"
         return 1
@@ -290,21 +302,60 @@ function init ()
     return 0
 }
 
+function envvars () {
+
+    function print_var () {
+        var_name="$1"
+        var_data="$(eval 'echo $'"$var_name")"
+
+        if [ "$var_filter" = "$var_name" ]; then
+            printf "%s\n" "$var_data"
+        elif [ "$var_filter" = "*" ]; then
+            printf "%s=\"%s\"\n" "$var_name" "$var_data"
+        fi
+    }
+
+    # Update Locations
+    sbpl_locations
+    [ "$sbpl_path" = "$base_path" ]
+
+    if ! [ -z ${1+x} ]; then
+        export var_filter="$1"
+    else
+        export var_filter="*"
+    fi
+
+    print_var "OS" 
+    print_var "ARCH" 
+    print_var "sbpl_version"
+ 
+    print_var "sbpl_dir_pkgs"
+    print_var "sbpl_dir_bins" 
+    print_var "sbpl_dir_tmps"
+
+    print_var "sbpl_dir_pkg"
+    print_var "sbpl_dir_bin"
+    print_var "sbpl_dir_tmp"
+
+    export sbpl_path_pkg="$PWD/$sbpl_dir_pkg"
+    export sbpl_path_bin="$PWD/$sbpl_dir_bin"
+    export sbpl_path_tmp="$PWD/$sbpl_dir_tmp"
+
+    print_var "sbpl_path_pkg"
+    print_var "sbpl_path_bin"
+    print_var "sbpl_path_tmp"
+
+    return 0
+}
 
 ######################################
 
 # Setup environment
-export_script_info "$0"
 export_platform_info
-
-pushd $sbpl_dir > /dev/null
-mkdir -p $sbpl_pkg_dir_tmp
-mkdir -p $sbpl_pkg_dir_bin
-
 export -f sbpl_get
+export -f sbpl_locations
 
-export PATH=$(pwd)/$sbpl_pkg_dir_bin:$PATH
-
+# Parse command line arguments
 if ! [ -z ${1+x} ]; then
 
     cmd=$1
@@ -312,18 +363,18 @@ if ! [ -z ${1+x} ]; then
 
     case "$cmd" in
         help*)      usage $@;           result=$?; ;;
-        update*)    get_pakages $@;     result=$?; ;;
+        update*)    get_packages $@;    result=$?; ;;
         upgrade*)   upgrade $@;         result=$?; ;;
         clean*)     clean $@;           result=$?; ;;
         version*)   show_version $@;    result=$?; ;;
         init*)      init $@;            result=$?; ;;
+        envvars*)   envvars $@;         result=$?; ;;
         *)   unknown_option $cmd $@;    result=$?; ;;
     esac;
 else
-                    get_pakages $@;     result=$?;
+                    get_packages $@;    result=$?;
 fi
 
 # Return
-popd > /dev/null
 exit $result
- 
+

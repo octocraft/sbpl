@@ -5,8 +5,9 @@ set -eu
 ./sbpl.sh
 
 # Include Packages
-export PATH=$(pwd)/vendor/bin:$PATH
+export PATH="$(./sbpl.sh envvars sbpl_path_bin):$PATH"
 
+# Loop through test folders
 for subdir in test*/; do 
 
     if [ -d "$subdir" ]; then
