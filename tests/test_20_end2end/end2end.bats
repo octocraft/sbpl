@@ -1,5 +1,7 @@
 #!/usr/bin/env bats
 
+target="sbpl-master"
+
 export OS="linux"
 export ARCH="amd64"
 export LC_NUMERIC="en_US.UTF-8"
@@ -16,6 +18,7 @@ export LC_NUMERIC="en_US.UTF-8"
     [ "${PIPESTATUS[0]}" -eq 0 ] 
  
     # Check data
+    [ -f "vendor/$target/$target/bin/sbpl" ]
     [ -f "vendor/bin/sbpl" ]
     run ./vendor/bin/sbpl version
     [ "$status" -eq 0 ]
@@ -39,6 +42,7 @@ export LC_NUMERIC="en_US.UTF-8"
     [ "$status" -eq 0 ]
     run ./vendor/bin/sbpl version
     [ "$status" -eq 0 ]
+    [ -f "vendor/$target/bin/sbpl" ]
 
     rm -rf vendor
 
@@ -54,6 +58,7 @@ export LC_NUMERIC="en_US.UTF-8"
     [ "$status" -eq 0 ]
     run ./vendor/bin/sbpl version
     [ "$status" -eq 0 ]
+    [ -f "vendor/$target/sbpl" ]
 
     rm -rf vendor
 

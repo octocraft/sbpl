@@ -135,7 +135,7 @@ sbpl_get () {
         bin_dir=""
     fi
 
-    package="${name}-${version}-${OS}-${ARCH}"
+    package="${name}-${version}"
 
     # Check if package is present
     if [ ! -d "$sbpl_pkg_dir/$package" ] ; then
@@ -143,12 +143,12 @@ sbpl_get () {
         printf "Get package: $package\n"
 
         destination="$sbpl_pkg_dir/$package"
+        link="$sbpl_pkg_dir/$name"
         mkdir -p "$destination"
 
-        bindir=$(pwd)/$sbpl_pkg_dir/$package/$bin_dir
+        bindir=$(pwd)/$destination/$bin_dir
         binfile=$bindir/$name
-
-
+        
         if [ "$target" = "file" ] || [ "$target" = "archive" ]; then
 
             tmpfile="$sbpl_pkg_dir_tmp/$package"
@@ -199,7 +199,7 @@ sbpl_get () {
         fi
 
         if ! [ -f "$binfile" ]; then
-            printf "Error while processing pacakge. $binfile not found\n" 1>&2
+            printf "Error while processing package. $binfile not found\n" 1>&2
             return 1
         fi
 
@@ -208,7 +208,7 @@ sbpl_get () {
         ln -sf "$binfile" "$sbpl_pkg_dir_bin/$name"
 
         if [ "$?" -ne 0 ]; then
-            printf "Error while creating symlink for target file in bin fodler\n" 1>&2
+            printf "Error while creating symlink for target file in bin folder\n" 1>&2
             return 1
         fi
     fi

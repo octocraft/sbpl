@@ -6,7 +6,7 @@ function curl () {
 }
 
 function test_sbpl_mock_curl () {
-    export TEST_EXPECTED_URL="test-0.0.0-${OS}-${ARCH}"
+    export TEST_EXPECTED_URL="test-0.0.0"
     export -f curl
     run ./sbpl.sh $@
     echo "status: $status" 1>&2
@@ -32,7 +32,7 @@ function teardown () {
 
 @test "set OS/ARCH - linux/x86" {
  
-   export OS=linux
+    export OS=linux
     export ARCH=x86
     test_sbpl_mock_curl
 }
