@@ -1,5 +1,7 @@
 #!/usr/bin/env bats
 
+eval "$(./sbpl.sh envvars)"
+
 @test "Get package: foo-1.0.0" {
 
     rm -rf vendor
@@ -9,10 +11,10 @@
     [ "$?" -eq 0 ]
 
     # Check file
-    [ -f "vendor/bin/foo" ]
+    [ -f "vendor/bin/$OS/$ARCH/foo" ]
 
     # Check command
-    [ "$(./vendor/bin/foo)" = "{\"foo\": \"bar\"}" ]
+    [ "$(./vendor/bin/$OS/$ARCH/foo)" = "{\"foo\": \"bar\"}" ]
 }
 
 @test "Get package: foo-1.0.0 (don't download)" {
@@ -31,7 +33,7 @@
     [ "$?" -eq 0 ]
 
     # Check file
-    ! [ -f "vendor/bin/foo" ]
+    ! [ -f "vendor/bin/$OS/$ARCH/foo" ]
 
     # Test the tester
     [ "$(foo)" = "hello world" ]

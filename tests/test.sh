@@ -8,7 +8,7 @@ set -eu
 eval "$(./sbpl.sh envvars)"
 
 # Include Packages
-export PATH="$sbpl_pkg_path/bin:$PATH"
+export PATH="$sbpl_pkg_path/bin/$OS/$ARCH:$PATH"
 
 for subdir in test*/; do 
 

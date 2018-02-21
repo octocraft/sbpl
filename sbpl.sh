@@ -132,24 +132,23 @@ sbpl_get () {
     url=$(eval "printf $4")
 
     if [ "$#" -ge 5 ]; then
-        bin_dir=$(eval "printf $5")
+        src_bin_dir=$(eval "printf $5")
     else
-        bin_dir=""
+        src_bin_dir=""
     fi
 
     package="${name}-${version}"
+    destination="$sbpl_pkg_dir/$OS/$ARCH/$package"
 
     # Check if package is present
-    if [ ! -d "$sbpl_pkg_dir/$package" ] ; then
+    if [ ! -d "$destination" ] ; then
 
         printf "Get package: $package\n"
 
-        destination="$sbpl_pkg_dir/$package"
-        link="$sbpl_pkg_dir/$name"
         mkdir -p "$destination"
 
-        bindir=$(pwd)/$destination/$bin_dir
-        binfile=$bindir/$name
+        pkg_bin_dir=$(pwd)/$destination/$src_bin_dir
+        pkg_bin_file=$pkg_bin_dir/$name
         
         if [ "$target" = "file" ] || [ "$target" = "archive" ]; then
 
@@ -172,8 +171,8 @@ sbpl_get () {
                     return 1
                 fi
             else
-                mkdir -p "$bindir"
-                mv "$tmpfile" "$binfile"
+                mkdir -p "$pkg_bin_dir"
+                mv "$tmpfile" "$pkg_bin_file"
             fi
 
         elif [ "$target" = "git" ]; then
@@ -200,14 +199,18 @@ sbpl_get () {
             return 2
         fi
 
-        if ! [ -f "$binfile" ]; then
-            printf "Error while processing package. $binfile not found\n" 1>&2
+        if ! [ -f "$pkg_bin_file" ]; then
+            printf "Error while processing package. $pkg_bin_file not found\n" 1>&2
             return 1
         fi
 
-        # Add to bin dir
-        chmod u+x "$binfile"
-        ln -sf "$binfile" "$sbpl_pkg_dir_bin/$name"
+        # Make executable
+        chmod u+x "$pkg_bin_file"
+    
+        # Create link in bin dir
+        bin_dir="$sbpl_pkg_dir_bin/$OS/$ARCH"
+        mkdir -p "$bin_dir"
+        ln -sf "$pkg_bin_file" "$bin_dir"
 
         if [ "$?" -ne 0 ]; then
             printf "Error while creating symlink for target file in bin folder\n" 1>&2
@@ -269,7 +272,7 @@ function clean ()
 function upgrade () 
 {
     sbpl_get 'file' 'sbpl' 'master' 'https://raw.githubusercontent.com/octocraft/${name}/${version}/sbpl.sh'
-    cp "$sbpl_pkg_dir_bin/sbpl" "$sbpl_pkg_dir_tmp/sbpl.sh"
+    cp "$sbpl_pkg_dir_bin/$OS/$ARCH/sbpl" "$sbpl_pkg_dir_tmp/sbpl.sh"
     mv "$sbpl_pkg_dir_tmp/sbpl.sh" "$sbpl"    
     return $?
 }
