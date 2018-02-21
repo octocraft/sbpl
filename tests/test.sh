@@ -1,15 +1,19 @@
 #!/bin/bash
 set -eu
 
+# Add sbpl to path
+export PATH="$PWD/../bin:$PATH"
+
 # Get Packages
-./sbpl.sh
+sbpl
 
 # Get Env Vars
-eval "$(./sbpl.sh envvars)"
+eval "$(sbpl envvars)"
 
 # Include Packages
 export PATH="$sbpl_path_bin:$PATH"
 
+# Loop through test folders
 for subdir in test*/; do 
 
     if [ -d "$subdir" ]; then
