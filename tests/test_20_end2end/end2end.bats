@@ -18,9 +18,9 @@ export LC_NUMERIC="en_US.UTF-8"
     [ "${PIPESTATUS[0]}" -eq 0 ] 
  
     # Check data
-    [ -f "vendor/$target/$target/bin/sbpl" ]
-    [ -f "vendor/bin/sbpl" ]
-    run ./vendor/bin/sbpl version
+    [ -f "vendor/$OS/$ARCH/$target/$target/bin/sbpl" ]
+    [ -f "vendor/bin/$OS/$ARCH/sbpl" ]
+    run ./vendor/bin/$OS/$ARCH/sbpl version
     [ "$status" -eq 0 ]
     
     # Do not re-download package
@@ -40,9 +40,9 @@ export LC_NUMERIC="en_US.UTF-8"
     rm -rf vendor
     run ./sbpl.sh
     [ "$status" -eq 0 ]
-    run ./vendor/bin/sbpl version
+    run ./vendor/bin/$OS/$ARCH/sbpl version
     [ "$status" -eq 0 ]
-    [ -f "vendor/$target/bin/sbpl" ]
+    [ -f "vendor/$OS/$ARCH/$target/bin/sbpl" ]
 
     rm -rf vendor
 
@@ -56,9 +56,9 @@ export LC_NUMERIC="en_US.UTF-8"
     rm -rf vendor
     run ./sbpl.sh
     [ "$status" -eq 0 ]
-    run ./vendor/bin/sbpl version
+    run ./vendor/bin/$OS/$ARCH/sbpl version
     [ "$status" -eq 0 ]
-    [ -f "vendor/$target/sbpl" ]
+    [ -f "vendor/$OS/$ARCH/$target/sbpl" ]
 
     rm -rf vendor
 
