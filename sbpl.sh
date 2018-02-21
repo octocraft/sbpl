@@ -1,7 +1,7 @@
 #!/bin/bash
 
-name="Simple Bash Package Loader"
-version="1.0.0"
+sbpl_name="Simple Bash Package Loader"
+export sbpl_version="1.0.0"
 
 export sbpl=$0
 export sbpl_pkg="sbpl-pkg.sh"
@@ -52,10 +52,12 @@ export_platform_info() {
 
 export_script_info () {
     
-    if ! [ -z sbpl_dir ]; then
-        sbpl_dir_realtive=${0%/*}
-        export sbpl_dir=$(pwd)$([ ! -z "$sbpl_dir_realtive" ] && printf "%s" "/$sbpl_dir_realtive")
+    if ! [ -z sbpl_path ]; then
+        sbpl_dir=${0%/*}
+        export sbpl_path=$(pwd)$([ ! -z "$sbpl_dir" ] && printf "%s" "/$sbpl_dir")
     fi
+
+    export sbpl_pkg_path="$sbpl_path/$sbpl_pkg_dir"
 }
 
 sbpl_get () {
@@ -234,7 +236,7 @@ function get_pakages ()
 
 function show_version () 
 {
-    printf "$name - $version\n"
+    printf "$sbpl_name - $sbpl_version\n"
     return 0
 }
 
@@ -245,6 +247,7 @@ function usage ()
     printf "upgrade - upgrade to latest sbpl version\n"
     printf "clean   - clear vendor dir\n"
     printf "version - print sbpl version information\n"
+    printf "envvars - print sbpl env vars in bash format\n"
 
     return 0
 }
@@ -290,6 +293,16 @@ function init ()
     return 0
 }
 
+function envvars () 
+{
+    printf "OS=\"%s\"\n" "$OS"
+    printf "ARCH=\"%s\"\n" "$ARCH"
+    printf "sbpl_version=\"%s\"\n" "$sbpl_version"
+    printf "sbpl_path=\"%s\"\n" "$sbpl_path"
+    printf "sbpl_pkg_path=\"%s\"\n" "$sbpl_pkg_path"
+
+    return 0
+}
 
 ######################################
 
@@ -297,13 +310,13 @@ function init ()
 export_script_info "$0"
 export_platform_info
 
-pushd $sbpl_dir > /dev/null
+pushd $sbpl_path > /dev/null
 mkdir -p $sbpl_pkg_dir_tmp
 mkdir -p $sbpl_pkg_dir_bin
 
 export -f sbpl_get
 
-export PATH=$(pwd)/$sbpl_pkg_dir_bin:$PATH
+export PATH="$sbpl_pkg_path:$PATH"
 
 if ! [ -z ${1+x} ]; then
 
@@ -317,6 +330,7 @@ if ! [ -z ${1+x} ]; then
         clean*)     clean $@;           result=$?; ;;
         version*)   show_version $@;    result=$?; ;;
         init*)      init $@;            result=$?; ;;
+        envvars*)   envvars $@;            result=$?; ;;
         *)   unknown_option $cmd $@;    result=$?; ;;
     esac;
 else

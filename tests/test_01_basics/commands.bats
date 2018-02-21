@@ -9,6 +9,7 @@
     [ "${lines[2]}" = "upgrade - upgrade to latest sbpl version" ]
     [ "${lines[3]}" = "clean   - clear vendor dir" ]
     [ "${lines[4]}" = "version - print sbpl version information" ]
+    [ "${lines[5]}" = "envvars - print sbpl env vars in bash format" ]
 
 }
 
@@ -42,4 +43,24 @@
 
     ! [ -f "vendor/test/test.txt" ]
     ! [ -d "vendor/test" ]
+}
+
+@test "sbpl envvars" {
+
+    base_path="$(readlink -f .)/."
+    export OS="linux"
+    export ARCH="amd64"
+
+    run ./sbpl.sh envvars
+    [ "$status" -eq 0 ]    
+
+    unset OS
+    unset ARCH
+    eval "$output"
+
+    [ "$OS"   = "linux" ]
+    [ "$ARCH" = "amd64" ]
+    [ "$sbpl_version" = "1.0.0" ]
+    [ "$sbpl_path" = "$base_path" ]
+    [ "$sbpl_pkg_path" = "$base_path/vendor" ]
 }
