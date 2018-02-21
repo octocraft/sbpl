@@ -5,9 +5,9 @@ export sbpl_version="1.0.0"
 
 export sbpl=$0
 export sbpl_pkg="sbpl-pkg.sh"
-export sbpl_pkg_dir="vendor"
-export sbpl_pkg_dir_bin="$sbpl_pkg_dir/bin"
-export sbpl_pkg_dir_tmp="$sbpl_pkg_dir/tmp"
+export sbpl_dir_pkgs="vendor"
+export sbpl_dir_bins="$sbpl_dir_pkgs/bin"
+export sbpl_dir_tmps="$sbpl_dir_pkgs/tmp"
 
 #######################################
 
@@ -56,8 +56,16 @@ export_script_info () {
         sbpl_dir=${0%/*}
         export sbpl_path=$(pwd)$([ ! -z "$sbpl_dir" ] && printf "%s" "/$sbpl_dir")
     fi
+}
 
-    export sbpl_pkg_path="$sbpl_path/$sbpl_pkg_dir"
+sbpl_locations () {
+    export sbpl_dir_pkg="$sbpl_dir_pkgs/$OS/$ARCH"
+    export sbpl_dir_bin="$sbpl_dir_bins/$OS/$ARCH"
+    export sbpl_dir_tmp="$sbpl_dir_tmps/$OS/$ARCH"
+
+    export sbpl_path_pkg="$sbpl_path/$sbpl_dir_pkg"
+    export sbpl_path_bin="$sbpl_path/$sbpl_dir_bin"
+    export sbpl_path_tmp="$sbpl_path/$sbpl_dir_tmp"
 }
 
 sbpl_get () {
@@ -137,8 +145,11 @@ sbpl_get () {
         src_bin_dir=""
     fi
 
+    # Update Locations
+    sbpl_locations
+
     package="${name}-${version}"
-    destination="$sbpl_pkg_dir/$OS/$ARCH/$package"
+    destination="$sbpl_dir_pkg/$package"
 
     # Check if package is present
     if [ ! -d "$destination" ] ; then
@@ -152,7 +163,8 @@ sbpl_get () {
         
         if [ "$target" = "file" ] || [ "$target" = "archive" ]; then
 
-            tmpfile="$sbpl_pkg_dir_tmp/$package"
+            mkdir -p "$sbpl_dir_tmp"
+            tmpfile="$sbpl_dir_tmp/$package"
            
             curl -fSL# "$url" -o "$tmpfile" 2>&1
             if [ "$?" -ne 0 ]; then
@@ -208,9 +220,8 @@ sbpl_get () {
         chmod u+x "$pkg_bin_file"
     
         # Create link in bin dir
-        bin_dir="$sbpl_pkg_dir_bin/$OS/$ARCH"
-        mkdir -p "$bin_dir"
-        ln -sf "$pkg_bin_file" "$bin_dir"
+        mkdir -p "$sbpl_dir_bin"
+        ln -sf "$pkg_bin_file" "$sbpl_dir_bin"
 
         if [ "$?" -ne 0 ]; then
             printf "Error while creating symlink for target file in bin folder\n" 1>&2
@@ -232,7 +243,7 @@ function get_pakages ()
     fi
 
     # Clear tmp
-    rm -rf "$sbpl_pkg_dir_tmp/*"
+    rm -rf "$sbpl_dir_tmp/*"
 
     return $result
 }
@@ -265,15 +276,21 @@ function unknown_option ()
 
 function clean ()
 {
-    rm -rf "$sbpl_pkg_dir"
+    rm -rf "$sbpl_dir_pkg"
     return $?
 }
 
 function upgrade () 
 {
+    # Update Locations
+    sbpl_locations
+
     sbpl_get 'file' 'sbpl' 'master' 'https://raw.githubusercontent.com/octocraft/${name}/${version}/sbpl.sh'
-    cp "$sbpl_pkg_dir_bin/$OS/$ARCH/sbpl" "$sbpl_pkg_dir_tmp/sbpl.sh"
-    mv "$sbpl_pkg_dir_tmp/sbpl.sh" "$sbpl"    
+
+    mkdir -p "$sbpl_dir_tmp"
+    cp "$sbpl_dir_bin/sbpl" "$sbpl_dir_tmp/sbpl.sh"
+    mv "$sbpl_dir_tmp/sbpl.sh" "$sbpl"    
+
     return $?
 }
 
@@ -298,11 +315,16 @@ function init ()
 
 function envvars () 
 {
+    # Update Locations
+    sbpl_locations
+
     printf "OS=\"%s\"\n" "$OS"
     printf "ARCH=\"%s\"\n" "$ARCH"
     printf "sbpl_version=\"%s\"\n" "$sbpl_version"
     printf "sbpl_path=\"%s\"\n" "$sbpl_path"
-    printf "sbpl_pkg_path=\"%s\"\n" "$sbpl_pkg_path"
+    printf "sbpl_path_pkg=\"%s\"\n" "$sbpl_path_pkg"
+    printf "sbpl_path_bin=\"%s\"\n" "$sbpl_path_bin"
+    printf "sbpl_path_tmp=\"%s\"\n" "$sbpl_path_tmp"
 
     return 0
 }
@@ -312,15 +334,16 @@ function envvars ()
 # Setup environment
 export_script_info "$0"
 export_platform_info
-
-pushd $sbpl_path > /dev/null
-mkdir -p $sbpl_pkg_dir_tmp
-mkdir -p $sbpl_pkg_dir_bin
-
 export -f sbpl_get
+export -f sbpl_locations
 
-export PATH="$sbpl_pkg_path:$PATH"
+# Add sbpl bin dir to path
+export PATH="$sbpl_path_bin:$PATH"
 
+# Change to script dir
+pushd $sbpl_path > /dev/null
+
+# Parse command line arguments
 if ! [ -z ${1+x} ]; then
 
     cmd=$1

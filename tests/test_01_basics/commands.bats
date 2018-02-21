@@ -31,18 +31,24 @@
 
 @test "sbpl clean" {
 
+    export OS="linux"
+    export ARCH="amd64"
+
     # Create test file
-    mkdir -p "vendor/test"
-    echo "123" > "vendor/test/test.txt"
+    mkdir -p "vendor/$OS/$ARCH/test"
+    echo "123" > "vendor/$OS/$ARCH/test/test.txt"
 
     # test the tester
-    [ $(cat "vendor/test/test.txt") = "123" ]
+    [ $(cat "vendor/$OS/$ARCH/test/test.txt") = "123" ]
 
     run ./sbpl.sh clean
     [ "$status" -eq 0 ]
 
-    ! [ -f "vendor/test/test.txt" ]
-    ! [ -d "vendor/test" ]
+    ! [ -f "vendor/$OS/$ARCH/test/test.txt" ]
+    ! [ -d "vendor/$OS/$ARCH/test" ]
+
+    unset OS
+    unset ARCH
 }
 
 @test "sbpl envvars" {
@@ -62,5 +68,8 @@
     [ "$ARCH" = "amd64" ]
     [ "$sbpl_version" = "1.0.0" ]
     [ "$sbpl_path" = "$base_path" ]
-    [ "$sbpl_pkg_path" = "$base_path/vendor" ]
+    [ "$sbpl_path_pkg" = "$base_path/vendor/linux/amd64" ]
+    [ "$sbpl_path_bin" = "$base_path/vendor/bin/linux/amd64" ]
+    [ "$sbpl_path_tmp" = "$base_path/vendor/tmp/linux/amd64" ]
+
 }
