@@ -53,7 +53,6 @@
 
 @test "sbpl envvars" {
 
-    base_path="$(readlink -f .)/."
     export OS="linux"
     export ARCH="amd64"
 
@@ -68,8 +67,16 @@
     [ "$ARCH" = "amd64" ]
     [ "$sbpl_version" = "1.0.0" ]
     [ "$sbpl_path" = "$base_path" ]
-    [ "$sbpl_path_pkg" = "$base_path/vendor/linux/amd64" ]
-    [ "$sbpl_path_bin" = "$base_path/vendor/bin/linux/amd64" ]
-    [ "$sbpl_path_tmp" = "$base_path/vendor/tmp/linux/amd64" ]
+    
+    [ "$sbpl_dir_pkgs" = "vendor" ]
+    [ "$sbpl_dir_bins" = "vendor/bin" ]
+    [ "$sbpl_dir_tmps" = "vendor/tmp" ]
+    
+    [ "$sbpl_dir_pkg" = "vendor/linux/amd64" ]
+    [ "$sbpl_dir_bin" = "vendor/bin/linux/amd64" ]
+    [ "$sbpl_dir_tmp" = "vendor/tmp/linux/amd64" ]
 
+    [ "$sbpl_path_pkg" = "$(pwd)/vendor/linux/amd64" ]
+    [ "$sbpl_path_bin" = "$(pwd)/vendor/bin/linux/amd64" ]
+    [ "$sbpl_path_tmp" = "$(pwd)/vendor/tmp/linux/amd64" ]
 }

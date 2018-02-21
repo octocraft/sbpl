@@ -50,22 +50,10 @@ export_platform_info() {
     fi
 }
 
-export_script_info () {
-    
-    if ! [ -z sbpl_path ]; then
-        sbpl_dir=${0%/*}
-        export sbpl_path=$(pwd)$([ ! -z "$sbpl_dir" ] && printf "%s" "/$sbpl_dir")
-    fi
-}
-
 sbpl_locations () {
     export sbpl_dir_pkg="$sbpl_dir_pkgs/$OS/$ARCH"
     export sbpl_dir_bin="$sbpl_dir_bins/$OS/$ARCH"
     export sbpl_dir_tmp="$sbpl_dir_tmps/$OS/$ARCH"
-
-    export sbpl_path_pkg="$sbpl_path/$sbpl_dir_pkg"
-    export sbpl_path_bin="$sbpl_path/$sbpl_dir_bin"
-    export sbpl_path_tmp="$sbpl_path/$sbpl_dir_tmp"
 }
 
 sbpl_get () {
@@ -234,16 +222,16 @@ sbpl_get () {
 function get_pakages () 
 {
     # Get Packages
-    if [ -f "$sbpl_pkg" ]; then
-        command "./$sbpl_pkg"
+    if [ -f "$PWD/$sbpl_pkg" ]; then
+        command "$PWD/$sbpl_pkg"
         result=$?
+
+        # Clear tmp
+        rm -rf "$PWD/$sbpl_dir_tmp/*"
     else
         printf "'$sbpl_pkg' not found. quit.\n" 1>&2
         result=1
     fi
-
-    # Clear tmp
-    rm -rf "$sbpl_dir_tmp/*"
 
     return $result
 }
@@ -321,10 +309,18 @@ function envvars ()
     printf "OS=\"%s\"\n" "$OS"
     printf "ARCH=\"%s\"\n" "$ARCH"
     printf "sbpl_version=\"%s\"\n" "$sbpl_version"
-    printf "sbpl_path=\"%s\"\n" "$sbpl_path"
-    printf "sbpl_path_pkg=\"%s\"\n" "$sbpl_path_pkg"
-    printf "sbpl_path_bin=\"%s\"\n" "$sbpl_path_bin"
-    printf "sbpl_path_tmp=\"%s\"\n" "$sbpl_path_tmp"
+
+    printf "sbpl_dir_pkgs=\"%s\"\n" "$sbpl_dir_pkgs"
+    printf "sbpl_dir_bins=\"%s\"\n" "$sbpl_dir_bins"
+    printf "sbpl_dir_tmps=\"%s\"\n" "$sbpl_dir_tmps"
+    
+    printf "sbpl_dir_pkg=\"%s\"\n" "$sbpl_dir_pkg"
+    printf "sbpl_dir_bin=\"%s\"\n" "$sbpl_dir_bin"
+    printf "sbpl_dir_tmp=\"%s\"\n" "$sbpl_dir_tmp"
+
+    printf "sbpl_path_pkg=\"%s\"\n" "$PWD/$sbpl_dir_pkg"
+    printf "sbpl_path_bin=\"%s\"\n" "$PWD/$sbpl_dir_bin"
+    printf "sbpl_path_tmp=\"%s\"\n" "$PWD/$sbpl_dir_tmp"
 
     return 0
 }
@@ -332,16 +328,9 @@ function envvars ()
 ######################################
 
 # Setup environment
-export_script_info "$0"
 export_platform_info
 export -f sbpl_get
 export -f sbpl_locations
-
-# Add sbpl bin dir to path
-export PATH="$sbpl_path_bin:$PATH"
-
-# Change to script dir
-pushd $sbpl_path > /dev/null
 
 # Parse command line arguments
 if ! [ -z ${1+x} ]; then
@@ -364,6 +353,5 @@ else
 fi
 
 # Return
-popd > /dev/null
 exit $result
  
