@@ -303,24 +303,46 @@ function init ()
 
 function envvars () 
 {
+    function print_var () {
+        var_name="$1"
+        var_data="$(eval 'echo $'"$var_name")"
+
+        if [ "$var_filter" = "$var_name" ]; then
+            printf "%s\n" "$var_data"
+        elif [ "$var_filter" = "*" ]; then
+            printf "%s=\"%s\"\n" "$var_name" "$var_data"
+        fi 
+    }
+
     # Update Locations
     sbpl_locations
+    [ "$sbpl_path" = "$base_path" ]
 
-    printf "OS=\"%s\"\n" "$OS"
-    printf "ARCH=\"%s\"\n" "$ARCH"
-    printf "sbpl_version=\"%s\"\n" "$sbpl_version"
+    if ! [ -z ${1+x} ]; then
+        export var_filter="$1"
+    else
+        export var_filter="*"
+    fi
 
-    printf "sbpl_dir_pkgs=\"%s\"\n" "$sbpl_dir_pkgs"
-    printf "sbpl_dir_bins=\"%s\"\n" "$sbpl_dir_bins"
-    printf "sbpl_dir_tmps=\"%s\"\n" "$sbpl_dir_tmps"
-    
-    printf "sbpl_dir_pkg=\"%s\"\n" "$sbpl_dir_pkg"
-    printf "sbpl_dir_bin=\"%s\"\n" "$sbpl_dir_bin"
-    printf "sbpl_dir_tmp=\"%s\"\n" "$sbpl_dir_tmp"
+    print_var "OS" 
+    print_var "ARCH" 
+    print_var "sbpl_version"
+ 
+    print_var "sbpl_dir_pkgs"
+    print_var "sbpl_dir_bins" 
+    print_var "sbpl_dir_tmps"
 
-    printf "sbpl_path_pkg=\"%s\"\n" "$PWD/$sbpl_dir_pkg"
-    printf "sbpl_path_bin=\"%s\"\n" "$PWD/$sbpl_dir_bin"
-    printf "sbpl_path_tmp=\"%s\"\n" "$PWD/$sbpl_dir_tmp"
+    print_var "sbpl_dir_pkg"
+    print_var "sbpl_dir_bin"
+    print_var "sbpl_dir_tmp"
+
+    export sbpl_path_pkg="$PWD/$sbpl_dir_pkg"
+    export sbpl_path_bin="$PWD/$sbpl_dir_bin"
+    export sbpl_path_tmp="$PWD/$sbpl_dir_tmp"
+
+    print_var "sbpl_path_pkg"
+    print_var "sbpl_path_bin"
+    print_var "sbpl_path_tmp"
 
     return 0
 }

@@ -63,10 +63,10 @@
     unset ARCH
     eval "$output"
 
+    # output
     [ "$OS"   = "linux" ]
     [ "$ARCH" = "amd64" ]
     [ "$sbpl_version" = "1.0.0" ]
-    [ "$sbpl_path" = "$base_path" ]
     
     [ "$sbpl_dir_pkgs" = "vendor" ]
     [ "$sbpl_dir_bins" = "vendor/bin" ]
@@ -79,4 +79,30 @@
     [ "$sbpl_path_pkg" = "$(pwd)/vendor/linux/amd64" ]
     [ "$sbpl_path_bin" = "$(pwd)/vendor/bin/linux/amd64" ]
     [ "$sbpl_path_tmp" = "$(pwd)/vendor/tmp/linux/amd64" ]
+
+    # envvars with filter
+    function test_envvar_filter () {
+        var_name="$1"
+        if [ "$(eval 'echo $'"$var_name")" = "$(./sbpl.sh envvars "$var_name")" ]; then
+            return 0
+        else
+            retrun 1
+        fi
+    }
+    
+    test_envvar_filter "OS"
+    test_envvar_filter "ARCH"
+    test_envvar_filter "sbpl_version"
+
+    test_envvar_filter "sbpl_dir_pkgs"
+    test_envvar_filter "sbpl_dir_bins"
+    test_envvar_filter "sbpl_dir_tmps"
+
+    test_envvar_filter "sbpl_dir_pkg"
+    test_envvar_filter "sbpl_dir_bin"
+    test_envvar_filter "sbpl_dir_tmp"
+
+    test_envvar_filter "sbpl_path_pkg"
+    test_envvar_filter "sbpl_path_bin"
+    test_envvar_filter "sbpl_path_tmp"
 }
