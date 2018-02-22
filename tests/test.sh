@@ -1,14 +1,11 @@
 #!/bin/bash
 set -eu
 
-# Add sbpl to path
-export PATH="$PWD/../bin:$PATH"
-
 # Get Packages
-sbpl
+./sbpl.sh
 
 # Get Env Vars
-eval "$(sbpl envvars)"
+eval "$(./sbpl.sh envvars)"
 
 # Include Packages
 export PATH="$sbpl_path_bin:$PATH"
