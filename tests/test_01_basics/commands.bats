@@ -9,7 +9,7 @@
     [ "${lines[2]}" = "upgrade - upgrade to latest sbpl version" ]
     [ "${lines[3]}" = "clean   - clear vendor dir" ]
     [ "${lines[4]}" = "version - print sbpl version information" ]
-    [ "${lines[5]}" = "envvars - print sbpl env vars in bash format" ]
+    [ "${lines[5]}" = "envvars - print vars used by sbpl. Pass a var name to filter the list" ]
 
 }
 
