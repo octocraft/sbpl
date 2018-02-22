@@ -11,7 +11,7 @@ export sbpl_dir_tmps="$sbpl_dir_pkgs/tmp"
 
 #######################################
 
-export_platform_info() {
+function export_platform_info () {
 
     if [ -z ${OS+x} ]; then
         case "$OSTYPE" in
@@ -30,7 +30,7 @@ export_platform_info() {
 
         export OS
     fi
-    
+
     if [ -z ${ARCH+x} ]; then
         case "$HOSTTYPE" in
             arm64*)     ARCH="arm64"        ;;
@@ -50,15 +50,16 @@ export_platform_info() {
     fi
 }
 
-sbpl_locations () {
+function sbpl_locations () {
+
     export sbpl_dir_pkg="$sbpl_dir_pkgs/$OS/$ARCH"
     export sbpl_dir_bin="$sbpl_dir_bins/$OS/$ARCH"
     export sbpl_dir_tmp="$sbpl_dir_tmps/$OS/$ARCH"
 }
 
-sbpl_get () {
+function sbpl_get () {
 
-    check_dependency () {
+    function check_dependency () {
 
         if ! command -v "$1" > /dev/null; then
             printf "Dependency '$1' not found\n" 1>&2
@@ -66,7 +67,7 @@ sbpl_get () {
         fi
     }
 
-    display_progress () {
+    function display_progress () {
 
         max=72
         total=$(if [ "$1" -le 0 ]; then echo 1; else echo "$1"; fi)
@@ -99,8 +100,8 @@ sbpl_get () {
         printf "\n"
     }
     
-    sbpl_usage () 
-    {
+    function sbpl_usage () {
+
         printf "Usage: sbpl_get 'target'\n" 1>&2
         printf "file    'name' 'version'    'url'\n" 1>&2
         printf "archive 'name' 'version'    'url' 'bin_dir'\n" 1>&2
@@ -219,8 +220,8 @@ sbpl_get () {
 
 }
 
-function get_packages () 
-{
+function get_packages () {
+
     # Get Packages
     if [ -f "$PWD/$sbpl_pkg" ]; then
         command "$PWD/$sbpl_pkg"
@@ -236,14 +237,14 @@ function get_packages ()
     return $result
 }
 
-function show_version () 
-{
+function show_version () {
+
     printf "$sbpl_name - $sbpl_version\n"
     return 0
 }
 
-function usage () 
-{
+function usage () {
+
     printf "help    - print usage information\n"
     printf "update  - download packages\n"
     printf "upgrade - upgrade to latest sbpl version\n"
@@ -254,22 +255,22 @@ function usage ()
     return 0
 }
 
-function unknown_option () 
-{
+function unknown_option () {
+
     printf "$sbpl: Unknown option $1\n"
     printf "Use $sbpl help for help with command-line options,\n"
     printf "or see the online docs at https://github.com/octocraft/sbpl\n"
     return 2
 }
 
-function clean ()
-{
+function clean () {
+
     rm -rf "$sbpl_dir_pkg"
     return $?
 }
 
-function upgrade () 
-{
+function upgrade () {
+
     # Update Locations
     sbpl_locations
 
@@ -282,8 +283,8 @@ function upgrade ()
     return $?
 }
 
-function init ()
-{
+function init () {
+
     if [ -f "$sbpl_pkg" ]; then
         printf "$sbpl_pkg already exists\n"
         return 1
@@ -301,8 +302,8 @@ function init ()
     return 0
 }
 
-function envvars () 
-{
+function envvars () {
+
     function print_var () {
         var_name="$1"
         var_data="$(eval 'echo $'"$var_name")"
@@ -311,7 +312,7 @@ function envvars ()
             printf "%s\n" "$var_data"
         elif [ "$var_filter" = "*" ]; then
             printf "%s=\"%s\"\n" "$var_name" "$var_data"
-        fi 
+        fi
     }
 
     # Update Locations
@@ -362,18 +363,18 @@ if ! [ -z ${1+x} ]; then
 
     case "$cmd" in
         help*)      usage $@;           result=$?; ;;
-        update*)    get_packages $@;     result=$?; ;;
+        update*)    get_packages $@;    result=$?; ;;
         upgrade*)   upgrade $@;         result=$?; ;;
         clean*)     clean $@;           result=$?; ;;
         version*)   show_version $@;    result=$?; ;;
         init*)      init $@;            result=$?; ;;
-        envvars*)   envvars $@;            result=$?; ;;
+        envvars*)   envvars $@;         result=$?; ;;
         *)   unknown_option $cmd $@;    result=$?; ;;
     esac;
 else
-                    get_packages $@;     result=$?;
+                    get_packages $@;    result=$?;
 fi
 
 # Return
 exit $result
- 
+
