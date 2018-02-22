@@ -4,11 +4,8 @@ set -eu
 # Get Packages
 ./sbpl.sh
 
-# Get Env Vars
-eval "$(./sbpl.sh envvars)"
-
 # Include Packages
-export PATH="$sbpl_path_bin:$PATH"
+export PATH="$(./sbpl.sh envvars sbpl_path_bin):$PATH"
 
 # Loop through test folders
 for subdir in test*/; do 

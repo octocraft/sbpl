@@ -44,29 +44,20 @@ sbpl_get 'git'     'sbpl' 'master' 'https://github.com/octocraft/${name}.git' '.
 
 ```
 
-Packages are downloaded (extracted if needed) and a symbolic link is placed in `vendor/bin`. Add this folder to `PATH` to make dependencies available for your apps/script.
+Packages are downloaded (extracted if needed) and a symbolic link is placed in `vendor/bin/$OS/$ARCH`. Add this folder to `PATH` to make dependencies available for your apps/script. Via the `envvars` command `sbpl` returns the path to the bin dir. You can use this to include it in `PATH` like this:
 
 ```BASH
-#!/bin/bash
-set -eu
-
-# Get Packages
-./sbpl.sh
-
-# Include Packages
-export PATH=$(pwd)/vendor/bin:$PATH
-
-# Execute
-# Place your command here. All dependencies will be available
-
+export PATH="$(./sbpl.sh envvars sbpl_path_bin):$PATH"
 ```
 
-You find this example in [examples/blank](examples/blank).
+You find a full example in [examples/blank](examples/blank).
 
 
 Note: `/sbpl.sh` calls `sbpl-pkg.sh` every time to check if it needs to download dependencies. It is assumed, that `sbpl-pkg.sh` runs without side effects. Keep this in mind if you include custom commands in this file.
 
 ### Commands
+
+`help` - Prints usage information and a list of commands which may be used
 
 `init` - Interactively create a `sbpl-pkg.sh` file
 
@@ -77,6 +68,8 @@ Note: `/sbpl.sh` calls `sbpl-pkg.sh` every time to check if it needs to download
 `clean` - Delete all contents in vendor-dir
 
 `version` - Prints the version of `sbpl`
+
+`envvars` - Returns all variables used by sbpl. You may pass a variable name to filter the list
 
 If called without further arguments `/sbpl.sh` will download packages if needed.
 
@@ -97,7 +90,11 @@ Usage: sbpl_get 'target'
 
 To define the bin-dir and the url, all the variables below can be used. Additionally the name (`$name`) and version (`$version`) are exposed to those arguments.
 
-Note: `url` and `bin-dir` are evaluated using eval. Use single quotes to make use of this.
+Note: `url` and `bin-dir` are evaluated using eval. Use single quotes to access variables provided by sbpl.
+
+**sbpl**
+
+`sbpl_version` - The version number of `sbpl`
 
 **Platform**
 
@@ -108,17 +105,25 @@ Note: `url` and `bin-dir` are evaluated using eval. Use single quotes to make us
 
 **Directories**
 
-`$sbpl_dir` - Absolute path to `/sbpl.sh`
+`$sbpl_dir_pkgs` - Relative path vendor dir (`vendor`)
 
-`$sbpl_pkg_dir` - Relative path vendor dir (`vendor`)
+`$sbpl_dir_bins` - Relative path to bin dir (`$sbpl_dir_pkgs/bin`)
 
-`$sbpl_pkg_dir_bin` - Relative path to bin dir (`$sbpl_pkg_dir/bin`)
+`$sbpl_dir_tmps` - Relative path to tmp dir (`$sbpl_dir_pkgs/tmp`)
 
-`$sbpl_pkg_dir_tmp` - Relative path to tmp dir (`$sbpl_pkg_dir/tmp`)
 
-**pwd**
+`$sbpl_dir_pkg` - Relative path to platform vendor dir (`vendor/$OS/$ARCH`)
 
-`sbpl.sh` performs a `pushd $sbpl_dir` before calling `sbpl-pkg.sh`. The working dir of `sbpl-pkg.sh` will always be the directory where `sbpl.sh` resides, not matter from where you call it.
+`$sbpl_dir_bin` - Relative path to platform bin dir (`$sbpl_dir_pkgs/bin/$OS/$ARCH`)
+
+`$sbpl_dir_tmp` - Relative path to platform bin dir (`$sbpl_dir_pkgs/tmp/$OS/$ARCH`)
+
+
+`$sbpl_path_pkg` - Absolute path to platform vendor dir (`$PWD/$sbpl_dir_pkg`)
+
+`$sbpl_path_bin` - Absolute path to platform bin dir (`$PWD/$sbpl_dir_bin`)
+
+`$sbpl_path_tmp` - Absolute path to platform bin dir (`$PWD/$sbpl_dir_tmp`)
 
 
 ## Examples

@@ -249,7 +249,7 @@ function usage ()
     printf "upgrade - upgrade to latest sbpl version\n"
     printf "clean   - clear vendor dir\n"
     printf "version - print sbpl version information\n"
-    printf "envvars - print sbpl env vars in bash format\n"
+    printf "envvars - print vars used by sbpl. Pass a var name to filter the list\n"
 
     return 0
 }
