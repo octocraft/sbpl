@@ -219,7 +219,7 @@ sbpl_get () {
 
 }
 
-function get_pakages () 
+function get_packages () 
 {
     # Get Packages
     if [ -f "$PWD/$sbpl_pkg" ]; then
@@ -362,7 +362,7 @@ if ! [ -z ${1+x} ]; then
 
     case "$cmd" in
         help*)      usage $@;           result=$?; ;;
-        update*)    get_pakages $@;     result=$?; ;;
+        update*)    get_packages $@;     result=$?; ;;
         upgrade*)   upgrade $@;         result=$?; ;;
         clean*)     clean $@;           result=$?; ;;
         version*)   show_version $@;    result=$?; ;;
@@ -371,7 +371,7 @@ if ! [ -z ${1+x} ]; then
         *)   unknown_option $cmd $@;    result=$?; ;;
     esac;
 else
-                    get_pakages $@;     result=$?;
+                    get_packages $@;     result=$?;
 fi
 
 # Return
