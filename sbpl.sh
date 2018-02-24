@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sbpl_name="Simple Bash Package Loader"
-export sbpl_version="1.0.0"
+export sbpl_version="0.2.0"
 
 export sbpl=$0
 export sbpl_pkg="sbpl-pkg.sh"

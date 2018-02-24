@@ -17,7 +17,7 @@
 
     run ./sbpl.sh version
     [ "$status" -eq 0 ]
-    [ "$output" = "Simple Bash Package Loader - 1.0.0" ]
+    [ "$output" = "Simple Bash Package Loader - 0.2.0" ]
 }
 
 @test "sbpl usage" {
@@ -66,7 +66,7 @@
     # output
     [ "$OS"   = "linux" ]
     [ "$ARCH" = "amd64" ]
-    [ "$sbpl_version" = "1.0.0" ]
+    [ "$sbpl_version" = "0.2.0" ]
     
     [ "$sbpl_dir_pkgs" = "vendor" ]
     [ "$sbpl_dir_bins" = "vendor/bin" ]
