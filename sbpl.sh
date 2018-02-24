@@ -157,7 +157,7 @@ function sbpl_get () {
            
             curl -fSL# "$url" -o "$tmpfile" 2>&1
             if [ "$?" -ne 0 ]; then
-                printf "Error while downloading\n" 1>&2
+                printf "Error while downloading '%s'\n" "$url" 1>&2
                 return 1
             fi
 
@@ -168,7 +168,7 @@ function sbpl_get () {
                 bsdtar xvf "$tmpfile" -C "$destination" 2>&1 | display_progress $numfiles
 
                 if [ "${PIPESTATUS[0]}" -ne 0 ]; then
-                    printf "Error while extracting\n" 1>&2
+                    printf "Error while extracting '%s'\n" "$tmpfile" 1>&2
                     return 1
                 fi
             else
@@ -180,7 +180,7 @@ function sbpl_get () {
        
             git clone "$url" "$destination"
             if [ "$?" -ne 0 ]; then
-                printf "Error while cloning repo\n" 1>&2
+                printf "Error while cloning repo '%s'\n" "$url" 1>&2
                 return 1
             fi
 
@@ -201,7 +201,7 @@ function sbpl_get () {
         fi
 
         if ! [ -f "$pkg_bin_file" ]; then
-            printf "Error while processing package. $pkg_bin_file not found\n" 1>&2
+            printf "Error while processing package: $pkg_bin_file not found\n" 1>&2
             return 1
         fi
 
