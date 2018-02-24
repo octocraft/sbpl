@@ -228,7 +228,7 @@ function get_packages () {
         result=$?
 
         # Clear tmp
-        rm -rf "$PWD/$sbpl_dir_tmp/*"
+        rm -rf "$PWD/$sbpl_dir_tmps/*"
     else
         printf "'$sbpl_pkg' not found. quit.\n" 1>&2
         result=1
@@ -265,7 +265,7 @@ function unknown_option () {
 
 function clean () {
 
-    rm -rf "$sbpl_dir_pkg"
+    rm -rf "$sbpl_dir_pkgs" && mkdir -p "$sbpl_dir_pkgs"
     return $?
 }
 

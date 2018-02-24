@@ -40,3 +40,4 @@ eval "$(./sbpl.sh envvars)"
 
     rm -rf vendor
 }
+
