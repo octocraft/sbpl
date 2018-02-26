@@ -22,16 +22,14 @@ function setup () {
 
 function teardown () {
     rm -rf vendor
-    rm -f sbpl-pkg.sh.lock
+    rm -f sbpl-pkg.sh.lock*
 }
 
 @test "pwd" {
     
-        
     run sbpl
     [ "$?" -eq 0 ]
     [ -d "vendor/$target" ]
     [ "$(vendor/bin/test)" = "test" ]
-
 }
 

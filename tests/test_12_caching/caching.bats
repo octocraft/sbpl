@@ -13,7 +13,7 @@ export -f curl
 @test "download pkg" {
 
     rm -rf vendor
-    rm -f sbpl-pkg.sh.lock
+    rm -f sbpl-pkg.sh.lock*
     
     run ./sbpl.sh
     [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]    
@@ -52,6 +52,6 @@ export -f curl
     [ ! -d "vendor/$OS/$ARCH/test-0.0.0" ]
 
     rm -rf vendor
-    rm -f sbpl-pkg.sh.lock
+    rm -f sbpl-pkg.sh.lock*
 }
 

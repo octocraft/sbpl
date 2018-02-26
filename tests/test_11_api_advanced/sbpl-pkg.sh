@@ -2,7 +2,7 @@
 set -eu
 
 export OS="windows"
-export ARCH="i386"
+export ARCH="386"
 sbpl_get 'archive' 'test' '0.0.0' '${name}-${version}'
 
 export OS="linux"

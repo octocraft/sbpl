@@ -232,6 +232,8 @@ function sbpl_get () {
 }
 
 function get_packages () {
+    
+    sbpl_pkg_lock="$sbpl_pkg.lock-$OS-$ARCH"
 
     # Check pkg file
     if [ -f "$PWD/$sbpl_pkg" ]; then
@@ -247,7 +249,7 @@ function get_packages () {
         fi
 
         # Check lock file & skip update if no changes
-        if [ -f "$PWD/$sbpl_pkg.lock" ] && diff "$PWD/$sbpl_pkg" "$PWD/$sbpl_pkg.lock" > /dev/null; then
+        if [ -f "$PWD/$sbpl_pkg_lock" ] && diff "$PWD/$sbpl_pkg" "$PWD/$sbpl_pkg_lock" > /dev/null; then
             return 0
         fi
 
@@ -259,9 +261,9 @@ function get_packages () {
 
         # Update lock file
         if [ $result -eq 0 ]; then
-            cp -p "$PWD/$sbpl_pkg" "$PWD/$sbpl_pkg.lock"
+            cp -p "$PWD/$sbpl_pkg" "$PWD/$sbpl_pkg_lock"
         else 
-            rm -f "$PWD/$sbpl_pkg.lock"
+            rm -f "$PWD/$sbpl_pkg_lock"
             echo "'sbpl-pkg.sh' failed with status $result"
             return $result
         fi
@@ -301,7 +303,7 @@ function unknown_option () {
 
 function clean () {
 
-    rm -rf "$PWD/$sbpl_pkg.lock" "$PWD/$sbpl_dir_pkgs" && mkdir -p "$PWD/$sbpl_dir_pkgs"
+    rm -rf $PWD/$sbpl_pkg.lock* $PWD/$sbpl_dir_pkgs && mkdir -p $PWD/$sbpl_dir_pkgs
     return $?
 }
 

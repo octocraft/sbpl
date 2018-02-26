@@ -20,8 +20,7 @@ function sbpl-pkg () {
 
     # clean
     rm -rf vendor
-    rm -f sbpl-pkg.sh
-    rm -f sbpl-pkg.sh.lock
+    rm -f sbpl-pkg.sh*
     
     # get pkg
     sbpl-pkg
@@ -29,6 +28,9 @@ function sbpl-pkg () {
     
     # check pkg
     [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]    
+
+    # Check lock file
+    [ -f "sbpl-pkg.sh.lock-linux-amd64" ]
 }
 
 @test "dont download pkg" {
@@ -67,6 +69,21 @@ function sbpl-pkg () {
     [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]    
 }
 
+@test "download pkg (new OS/ARCH)" {
+
+    export OS="windows"
+    export ARCH="386"
+ 
+    # re-run sbpl
+    run ./sbpl.sh
+    
+    # check pkg
+    [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]
+
+    # Check lock file
+    [ -f "sbpl-pkg.sh.lock-windows-386" ]
+}
+
 @test "remove lock file on error" {
 
     # add content to pkg file
@@ -81,16 +98,18 @@ function sbpl-pkg () {
     [ "${lines[1]}" = "'sbpl-pkg.sh' failed with status 42" ]
 
     # check pkg
-    ! [ -f "sbpl-pkg.sh.lock" ]
+    [   -f "sbpl-pkg.sh.lock-windows-386" ]
+    [ ! -f "sbpl-pkg.sh.lock-linux-amd64" ]
 }
 
 @test "do not create lock file on error" {
-    
+
     # re-run sbpl
     run ./sbpl.sh
 
     # check pkg
-    ! [ -f "sbpl-pkg.sh.lock" ]
+    [   -f "sbpl-pkg.sh.lock-windows-386" ]
+    [ ! -f "sbpl-pkg.sh.lock-linux-amd64" ]
 
     # clean
     rm -rf vendor

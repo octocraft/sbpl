@@ -1,2 +1,2 @@
 tests/**/vendor
-tests/**/*.lock
+tests/**/*.lock*

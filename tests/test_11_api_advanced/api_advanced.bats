@@ -11,7 +11,7 @@ function setup () {
 
 function teardown () {
     rm -rf vendor
-    rm -f sbpl-pkg.sh.lock
+    rm -f sbpl-pkg.sh.lock*
 }
     
 @test "set OS/ARCH - mixed" {
@@ -22,7 +22,7 @@ function teardown () {
     echo "status: $status" 1>&2
     echo "output: $output" 1>&2
     [ "$status" -eq 0 ]
-    [ -d "vendor/windows/i386/$TEST_EXPECTED_URL" ]
+    [ -d "vendor/windows/386/$TEST_EXPECTED_URL" ]
     [ -d "vendor/linux/amd64/$TEST_EXPECTED_URL" ]
 
 }
