@@ -150,7 +150,7 @@ function sbpl_get () {
 
         mkdir -p "$destination"
 
-        pkg_bin_dir=$(pwd)/$destination/$src_bin_dir
+        pkg_bin_dir=$PWD/$destination/$src_bin_dir
         pkg_bin_file=$pkg_bin_dir/$name
         
         if [ "$target" = "file" ] || [ "$target" = "archive" ]; then
@@ -158,10 +158,9 @@ function sbpl_get () {
             tmpfile="$sbpl_dir_tmp/$package"
            
             mkdir -p "$sbpl_dir_tmp"
-            curl -fSL# "$url" -o "$tmpfile" 2>&1 | tee && result=${PIPESTATUS[0]} || result=$?
+            curl -fSL# "$url" -o "$tmpfile" 2>&1 | tee 
+            result=${PIPESTATUS[0]}
             
-            echo "HELLO $result" 1>&2
-
             if [ "$result" -ne 0 ]; then
                 printf "Error while downloading '%s'\n" "$url" 1>&2
             else
@@ -171,34 +170,32 @@ function sbpl_get () {
                     numfiles=$(bsdtar tf $tmpfile | wc -l)
                 
                     bsdtar xvf "$tmpfile" -C "$destination" 2>&1 | display_progress $numfiles
+                    result=${PIPESTATUS[0]}
 
-                    if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+                    if [ "$result" -ne 0 ]; then
                         printf "Error while extracting '%s'\n" "$tmpfile" 1>&2
-                        result=${PIPESTATUS[0]}
                     fi
                 else
-                    mkdir -p "$pkg_bin_dir" && mv "$tmpfile" "$pkg_bin_file"
-                    
-                    if [ "$?" -ne 0 ]; then
-                        printf "Error while moving file '%s' to '%s'\n" "$tmpfile" "$pkg_bin_file" 1>&2
-                        result=1
-                    fi
+                    mkdir -p "$pkg_bin_dir"
+                    mv "$tmpfile" "$pkg_bin_file"
                 fi
             fi
         elif [ "$target" = "git" ]; then
        
-            git clone "$url" "$destination" && result=$? || result=$?
+            git clone "$url" "$destination" | tee
+            result=${PIPESTATUS[0]}
 
             if [ "$result" -ne 0 ]; then
                 printf "Error while cloning repo '%s'\n" "$url" 1>&2
             else
 
                 pushd "$destination" > /dev/null
-                git checkout "$version" && result=$? || result=$?
+                    git checkout "$version" | tee
+                    result=${PIPESTATUS[0]}
                 popd  > /dev/null
     
                 if [ "$result" -ne 0 ]; then
-                    printf "Error while checking out branch/tag\n" 1>&2
+                    printf "Error while checking out branch/tag '%s'\n" "$version" 1>&2
                 fi
             fi
         else 
@@ -319,7 +316,7 @@ function upgrade () {
     cp "$sbpl_dir_bin/sbpl" "$sbpl_dir_tmp/sbpl.sh"
     mv "$sbpl_dir_tmp/sbpl.sh" "$sbpl"    
 
-    return $?
+    return 0
 }
 
 function init () {
@@ -329,7 +326,7 @@ function init () {
         return 1
     fi
 
-    printf "#!/bin/bash\n\n" > $sbpl_pkg
+    printf "#!/bin/bash\nset -eu\n\n" > $sbpl_pkg
     printf "%s\n" '# Call sbpl_get to add dependencies, e.g:' >> $sbpl_pkg
     printf "%s\n" '#   sbpl_get '"'"'archive'"'"' '"'"'sbpl'"'"' '"'"'master'"'"' '"'"'https://github.com/octocraft/${name}/archive/${version}.zip'"'"'                '"'"'./${name}-${version}/bin/'"'" >> $sbpl_pkg
     printf "%s\n" '#   sbpl_get '"'"'file'"'"'    '"'"'sbpl'"'"' '"'"'master'"'"' '"'"'https://raw.githubusercontent.com/octocraft/${name}/${version}/${name}.sh'"'" >> $sbpl_pkg

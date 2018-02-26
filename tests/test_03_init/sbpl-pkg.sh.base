@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 # Call sbpl_get to add dependencies, e.g:
 #   sbpl_get 'archive' 'sbpl' 'master' 'https://github.com/octocraft/${name}/archive/${version}.zip'                './${name}-${version}/bin/'

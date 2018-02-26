@@ -37,6 +37,7 @@ or create it yourself.
 
 ```BASH
 #!/bin/bash
+set -eu
 
 sbpl_get 'archive' 'sbpl' 'master' 'https://github.com/octocraft/${name}/archive/${version}.zip' './${name}-${version}/bin/'
 sbpl_get 'file'    'sbpl' 'master' 'https://raw.githubusercontent.com/octocraft/${name}/${version}/${name}.sh'

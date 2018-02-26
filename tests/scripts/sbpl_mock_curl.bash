@@ -12,7 +12,7 @@ fi
 
 if ! [ -z ${TEST_PACKGE+x} ]; then
     # Create zip from folder
-    bsdtar -C "$TEST_PACKGE" -acf "$dest" '.'   
+    command -p bsdtar -C "$TEST_PACKGE" -acf "$dest" '.'   
 else
     # Empty zip archive
     echo -e "\x50\x4B\x05\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" > $dest

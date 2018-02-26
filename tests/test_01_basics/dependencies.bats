@@ -28,8 +28,9 @@ function teardown () {
     sbpl-pkg "file"
 
     run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
-    [ "$status" -eq 2 ]
     echo "output: $output" 1>&2
+    echo "status: $status" 1>&2
+    [ "$status" -eq 2 ]
     [ "${lines[0]}" = "Dependency 'curl' not found" ]
     [ "${lines[1]}" = "'sbpl-pkg.sh' failed with status 2" ]
 }
@@ -41,8 +42,9 @@ function teardown () {
     ln -s $(command -v curl) dependencies/curl    
 
     run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
-    [ "$status" -eq 2 ]
     echo "output: $output" 1>&2
+    echo "status: $status" 1>&2
+    [ "$status" -eq 2 ]
     [ "${lines[0]}" = "Dependency 'bsdtar' not found" ]
 }
 
@@ -54,8 +56,8 @@ function teardown () {
     ln -s $(command -v curl) dependencies/curl
 
     run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
-    
-    [ "$status" -eq 2 ]
     echo "output: $output" 1>&2
+    echo "status: $status" 1>&2
+    [ "$status" -eq 2 ]
     [ "${lines[0]}" = "Dependency 'git' not found" ]
 }
