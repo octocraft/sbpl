@@ -1,5 +1,7 @@
 #!/usr/bin/env bats
 
+export SBPL_VER="$(cat ../data/sbpl_version)"
+
 @test "sbpl help" {
 
     run ./sbpl.sh help
@@ -17,7 +19,7 @@
 
     run ./sbpl.sh version
     [ "$status" -eq 0 ]
-    [ "$output" = "Simple Bash Package Loader - 0.2.0" ]
+    [ "$output" = "Simple Bash Package Loader - $SBPL_VER" ]
 }
 
 @test "sbpl usage" {
@@ -66,7 +68,7 @@
     # output
     [ "$OS"   = "linux" ]
     [ "$ARCH" = "amd64" ]
-    [ "$sbpl_version" = "0.2.0" ]
+    [ "$sbpl_version" = "$SBPL_VER" ]
     
     [ "$sbpl_dir_pkgs" = "vendor" ]
     [ "$sbpl_dir_bins" = "vendor/bin" ]
