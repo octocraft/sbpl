@@ -6,9 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Add more details to error messages
 ### Changed
 - Fix clean command
+- Introduced package locking
+- Improved error handling
 
 ## [0.2.0] - 2018-02-24
 ### Added

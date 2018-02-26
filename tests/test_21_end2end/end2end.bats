@@ -39,5 +39,6 @@ eval "$(./sbpl.sh envvars)"
     [ "$(foo)" = "hello world" ]
 
     rm -rf vendor
+    rm -f sbpl-pkg.sh.lock
 }
 

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 sbpl_name="Simple Bash Package Loader"
 export sbpl_version="0.2.0"
@@ -118,8 +119,8 @@ function sbpl_get () {
     case "$target" in
         file)                                           ;;
         archive)    check_dependency bsdtar;            ;;
-        git)        check_dependency git                ;; 
-        *)          printf "Unknown option $target\n"    
+        git)        check_dependency git                ;;
+        *)          printf "Unknown option $target\n"
                     sbpl_usage; return 2;               ;;
     esac
 
@@ -140,6 +141,8 @@ function sbpl_get () {
     package="${name}-${version}"
     destination="$sbpl_dir_pkg/$package"
 
+    result=0
+
     # Check if package is present
     if [ ! -d "$destination" ] ; then
 
@@ -152,89 +155,125 @@ function sbpl_get () {
         
         if [ "$target" = "file" ] || [ "$target" = "archive" ]; then
 
-            mkdir -p "$sbpl_dir_tmp"
             tmpfile="$sbpl_dir_tmp/$package"
            
-            curl -fSL# "$url" -o "$tmpfile" 2>&1
-            if [ "$?" -ne 0 ]; then
+            mkdir -p "$sbpl_dir_tmp"
+            curl -fSL# "$url" -o "$tmpfile" 2>&1 | tee && result=${PIPESTATUS[0]} || result=$?
+            
+            echo "HELLO $result" 1>&2
+
+            if [ "$result" -ne 0 ]; then
                 printf "Error while downloading '%s'\n" "$url" 1>&2
-                return 1
-            fi
-
-            if [ "$target" = "archive" ]; then
-                
-                numfiles=$(bsdtar tf $tmpfile | wc -l)
-                
-                bsdtar xvf "$tmpfile" -C "$destination" 2>&1 | display_progress $numfiles
-
-                if [ "${PIPESTATUS[0]}" -ne 0 ]; then
-                    printf "Error while extracting '%s'\n" "$tmpfile" 1>&2
-                    return 1
-                fi
             else
-                mkdir -p "$pkg_bin_dir"
-                mv "$tmpfile" "$pkg_bin_file"
-            fi
+            
+                if [ "$target" = "archive" ]; then
+                
+                    numfiles=$(bsdtar tf $tmpfile | wc -l)
+                
+                    bsdtar xvf "$tmpfile" -C "$destination" 2>&1 | display_progress $numfiles
 
+                    if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+                        printf "Error while extracting '%s'\n" "$tmpfile" 1>&2
+                        result=${PIPESTATUS[0]}
+                    fi
+                else
+                    mkdir -p "$pkg_bin_dir" && mv "$tmpfile" "$pkg_bin_file"
+                    
+                    if [ "$?" -ne 0 ]; then
+                        printf "Error while moving file '%s' to '%s'\n" "$tmpfile" "$pkg_bin_file" 1>&2
+                        result=1
+                    fi
+                fi
+            fi
         elif [ "$target" = "git" ]; then
        
-            git clone "$url" "$destination"
-            if [ "$?" -ne 0 ]; then
+            git clone "$url" "$destination" && result=$? || result=$?
+
+            if [ "$result" -ne 0 ]; then
                 printf "Error while cloning repo '%s'\n" "$url" 1>&2
-                return 1
+            else
+
+                pushd "$destination" > /dev/null
+                git checkout "$version" && result=$? || result=$?
+                popd  > /dev/null
+    
+                if [ "$result" -ne 0 ]; then
+                    printf "Error while checking out branch/tag\n" 1>&2
+                fi
             fi
-
-            pushd "$destination" > /dev/null
-            git checkout "$version"
-            status=$?
-            popd  > /dev/null
-
-            if [ "$status" -ne 0 ]; then
-                printf "Error while checking out branch/tag\n" 1>&2
-                return 1
-            fi
-
         else 
             printf "Unknown option $1\n"
             sbpl_usage
-            return 2
+            result=2
         fi
 
-        if ! [ -f "$pkg_bin_file" ]; then
+        if [ "$result" -eq 0 ] && [ ! -f "$pkg_bin_file" ]; then
             printf "Error while processing package: $pkg_bin_file not found\n" 1>&2
-            return 1
+            result=1
         fi
 
-        # Make executable
-        chmod u+x "$pkg_bin_file"
-    
-        # Create link in bin dir
-        mkdir -p "$sbpl_dir_bin"
-        ln -sf "$pkg_bin_file" "$sbpl_dir_bin"
+        destionation_bin="$sbpl_dir_bin/$name"
 
-        if [ "$?" -ne 0 ]; then
-            printf "Error while creating symlink for target file in bin folder\n" 1>&2
-            return 1
+        if [ "$result" -eq 0 ]; then
+
+            # Make executable and create link in bin dir
+            chmod u+x "$pkg_bin_file" && mkdir -p "$sbpl_dir_bin" && ln -sf "$pkg_bin_file" "$destionation_bin"
+
+            if [ "$?" -ne 0 ]; then
+                printf "Error while creating symlink for target file in bin folder\n" 1>&2
+                result=1
+            fi
+        fi
+
+        if [ $result -ne 0 ]; then
+            rm -rf $destination
+            rm -f $destionation_bin
         fi
     fi
 
+    return $result
 }
 
 function get_packages () {
 
-    # Get Packages
+    # Check pkg file
     if [ -f "$PWD/$sbpl_pkg" ]; then
-        command "$PWD/$sbpl_pkg"
-        result=$?
+
+        if ! command -v diff > /dev/null; then
+            function diff () {
+                if [ "$(cat $1)" = "$(cat $2)" ]; then
+                    return 0
+                else
+                    return 1
+                fi
+            }
+        fi
+
+        # Check lock file & skip update if no changes
+        if [ -f "$PWD/$sbpl_pkg.lock" ] && diff "$PWD/$sbpl_pkg" "$PWD/$sbpl_pkg.lock" > /dev/null; then
+            return 0
+        fi
+
+        # Run pkg script
+        command "$PWD/$sbpl_pkg" && result=$? || result=$?
 
         # Clear tmp
         rm -rf "$PWD/$sbpl_dir_tmps/*"
+
+        # Update lock file
+        if [ $result -eq 0 ]; then
+            cp -p "$PWD/$sbpl_pkg" "$PWD/$sbpl_pkg.lock"
+        else 
+            rm -f "$PWD/$sbpl_pkg.lock"
+            echo "'sbpl-pkg.sh' failed with status $result"
+            return $result
+        fi
     else
-        printf "'$sbpl_pkg' not found. quit.\n" 1>&2
-        result=1
+        printf "'$sbpl_pkg' not found\n" 1>&2
+        return 1
     fi
 
-    return $result
+    return 0
 }
 
 function show_version () {
@@ -265,7 +304,7 @@ function unknown_option () {
 
 function clean () {
 
-    rm -rf "$sbpl_dir_pkgs" && mkdir -p "$sbpl_dir_pkgs"
+    rm -rf "$PWD/$sbpl_pkg.lock" "$PWD/$sbpl_dir_pkgs" && mkdir -p "$PWD/$sbpl_dir_pkgs"
     return $?
 }
 
@@ -317,7 +356,6 @@ function envvars () {
 
     # Update Locations
     sbpl_locations
-    [ "$sbpl_path" = "$base_path" ]
 
     if ! [ -z ${1+x} ]; then
         export var_filter="$1"

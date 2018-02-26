@@ -11,8 +11,9 @@ function setup () {
 
 function teardown () {
     rm -rf vendor
+    rm -f sbpl-pkg.sh.lock
 }
-
+    
 @test "set OS/ARCH - mixed" {
 
     export TEST_EXPECTED_URL="test-0.0.0"

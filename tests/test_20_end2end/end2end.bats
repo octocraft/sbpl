@@ -29,6 +29,7 @@ export LC_NUMERIC="en_US.UTF-8"
     [ -z "$output" ]
 
     rm -rf vendor
+    rm -f sbpl-pkg.sh.lock
     
     popd > /dev/null
 }
@@ -45,6 +46,7 @@ export LC_NUMERIC="en_US.UTF-8"
     [ -f "vendor/$OS/$ARCH/$target/bin/sbpl" ]
 
     rm -rf vendor
+    rm -f sbpl-pkg.sh.lock
 
     popd > /dev/null
 }
@@ -61,6 +63,7 @@ export LC_NUMERIC="en_US.UTF-8"
     [ -f "vendor/$OS/$ARCH/$target/sbpl" ]
 
     rm -rf vendor
+    rm -f sbpl-pkg.sh.lock
 
     popd > /dev/null
 }

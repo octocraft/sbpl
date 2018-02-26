@@ -8,6 +8,6 @@ function teardown () {
 
     run ./sbpl.sh
     [ "$status" -eq 1 ]
-    [ "$output" = "'sbpl-pkg.sh' not found. quit." ]
+    [ "$output" = "'sbpl-pkg.sh' not found" ]
 }
 

@@ -6,6 +6,7 @@ function setup () {
 
 function teardown () {
     rm -rf vendor
+    rm -f sbpl-pkg.sh.lock
 }
 
 @test "sbpl_get wrong" {

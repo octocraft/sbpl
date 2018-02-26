@@ -6,13 +6,14 @@ function setup () {
 
 function teardown () {
     rm -rf vendor
+    rm -f sbpl-pkg.sh.lock
 }
 
 @test "sbpl_get usage" {
 
     run ./sbpl.sh
     [ "$status" -eq 2 ]
-    echo "outpit: $output" 1>&2
+    echo "output: $output" 1>&2
 
     [ "${lines[0]}" = "Usage: sbpl_get 'target'" ]
     [ "${lines[1]}" = "file    'name' 'version'    'url'" ]

@@ -23,6 +23,6 @@
     # Clean up
     rm -rf vendor
     rm -f sbpl-pkg.sh
-
+    rm -f sbpl-pkg.sh.lock
 }
 
