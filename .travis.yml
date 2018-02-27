@@ -4,9 +4,8 @@ os:
     - linux
 
 before_install:
-    - sudo apt-get update && sudo apt-get install -y curl bsdtar git
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update && sudo apt-get install -y curl bsdtar git; fi
     - cd tests
-
 
 script: 
     - ./test.sh

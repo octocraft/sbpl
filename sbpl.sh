@@ -130,33 +130,30 @@ function sbpl_get () {
     url=$(eval "printf $4")
 
     if [ "$#" -ge 5 ]; then
-        src_bin_dir=$(eval "printf $5")
+        pkg_dir_bin=$(eval "printf $5")
     else
-        src_bin_dir=""
+        pkg_dir_bin=""
     fi
 
     # Update Locations
     sbpl_locations
 
-    package="${name}-${version}"
-    destination="$sbpl_dir_pkg/$package"
+    pkg="${name}-${version}"
+    pkg_dir="$sbpl_dir_pkg/$pkg"
+    pkg_path="$PWD/$pkg_dir"
 
     result=0
 
     # Check if package is present
-    if [ ! -d "$destination" ] ; then
+    if [ ! -d "$pkg_dir" ] ; then
 
-        printf "Get package: $package\n"
+        printf "Get package: $pkg\n"
 
-        mkdir -p "$destination"
+        mkdir -p "$pkg_dir"
 
-        pkg_bin_dir=$PWD/$destination/$src_bin_dir
-        pkg_bin_file=$pkg_bin_dir/$name
-        
         if [ "$target" = "file" ] || [ "$target" = "archive" ]; then
 
-            tmpfile="$sbpl_dir_tmp/$package"
-           
+            tmpfile="$sbpl_dir_tmp/$pkg"
             mkdir -p "$sbpl_dir_tmp"
             curl -fSL# "$url" -o "$tmpfile" 2>&1 | tee 
             result=${PIPESTATUS[0]}
@@ -169,27 +166,28 @@ function sbpl_get () {
                 
                     numfiles=$(bsdtar tf $tmpfile | wc -l)
                 
-                    bsdtar xvf "$tmpfile" -C "$destination" 2>&1 | display_progress $numfiles
+                    bsdtar xvf "$tmpfile" -C "$pkg_dir" 2>&1 | display_progress $numfiles
                     result=${PIPESTATUS[0]}
 
                     if [ "$result" -ne 0 ]; then
                         printf "Error while extracting '%s'\n" "$tmpfile" 1>&2
                     fi
                 else
-                    mkdir -p "$pkg_bin_dir"
-                    mv "$tmpfile" "$pkg_bin_file"
+                    mkdir -p "$pkg_path"
+                    chmod +x "$tmpfile"
+                    mv "$tmpfile" "$pkg_path/$name"
                 fi
             fi
         elif [ "$target" = "git" ]; then
        
-            git clone "$url" "$destination" | tee
+            git clone "$url" "$pkg_dir" | tee
             result=${PIPESTATUS[0]}
 
             if [ "$result" -ne 0 ]; then
                 printf "Error while cloning repo '%s'\n" "$url" 1>&2
             else
 
-                pushd "$destination" > /dev/null
+                pushd "$pkg_dir" > /dev/null
                     git checkout "$version" | tee
                     result=${PIPESTATUS[0]}
                 popd  > /dev/null
@@ -204,27 +202,22 @@ function sbpl_get () {
             result=2
         fi
 
-        if [ "$result" -eq 0 ] && [ ! -f "$pkg_bin_file" ]; then
-            printf "Error while processing package: $pkg_bin_file not found\n" 1>&2
-            result=1
-        fi
-
-        destionation_bin="$sbpl_dir_bin/$name"
-
         if [ "$result" -eq 0 ]; then
+            mkdir -p "$sbpl_dir_bin"
 
-            # Make executable and create link in bin dir
-            chmod u+x "$pkg_bin_file" && mkdir -p "$sbpl_dir_bin" && ln -sf "$pkg_bin_file" "$destionation_bin"
+            pkg_path_bin="$pkg_path/$pkg_dir_bin"
 
-            if [ "$?" -ne 0 ]; then
-                printf "Error while creating symlink for target file in bin folder\n" 1>&2
-                result=1
+            if [ -d "$pkg_path_bin" ]; then
+                pkg_path_bin="$pkg_path_bin/*"
             fi
-        fi
 
-        if [ $result -ne 0 ]; then
-            rm -rf $destination
-            rm -f $destionation_bin
+            for f in $pkg_path_bin; do
+                if [ -f $f ] && [ -x $f ]; then
+                    ln -sf $f "$sbpl_dir_bin/."
+                fi
+            done
+        else
+            rm -rf $pkg_dir
         fi
     fi
 
@@ -264,7 +257,7 @@ function get_packages () {
             cp -p "$PWD/$sbpl_pkg" "$PWD/$sbpl_pkg_lock"
         else 
             rm -f "$PWD/$sbpl_pkg_lock"
-            echo "'sbpl-pkg.sh' failed with status $result"
+            printf "'sbpl-pkg.sh' failed with status $result\n"
             return $result
         fi
     else

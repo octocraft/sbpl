@@ -27,7 +27,7 @@ sudo apt-get update && sudo apt-get install -y curl bsdtar git
 
 ## Usage
 
-`sbpl` requires you to have a `sbpl-pkg.sh` file in the same directory as `sbpl.sh`. This file is used to manage your dependencies. You can create this file interactively by calling
+`sbpl` requires you to have a `sbpl-pkg.sh` file in the working direcotry. This file is used to manage your dependencies. You can generate it by calling
 
 ```BASH
 ./sbpl.sh init
@@ -89,7 +89,10 @@ Usage: sbpl_get 'target'
 - `sbpl_get archive 'name' 'version'    'url' 'bin_dir'`
 - `sbpl_get git     'name' 'branch/tag' 'url' 'bin_dir'`
 
-To define the bin-dir and the url, all the variables below can be used. Additionally the name (`$name`) and version (`$version`) are exposed to those arguments.
+To define the bin-dir and the url, all the variables below can be used. Additionally the name (`$name`) and version (`$version`) are exposed to those arguments. Additional options can be added to influence the bevaior of find (which is internatlly used):
+- `bin` - bin path
+- `{OS}-${ARCH}/bin` - path using variables
+- `name/bin/*.exe` - path using filter for `*.exe`
 
 Note: `url` and `bin-dir` are evaluated using eval. Use single quotes to access variables provided by sbpl.
 
