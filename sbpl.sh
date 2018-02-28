@@ -127,10 +127,10 @@ function sbpl_get () {
     # Get Arguments and eval vars
     name=$2
     version=$3
-    url=$(eval "printf $4")
+    url=$(eval "printf \"$4\"")
 
     if [ "$#" -ge 5 ]; then
-        pkg_dir_bin=$(eval "printf $5")
+        pkg_dir_bin=$(eval "printf \"$5\"")
     else
         pkg_dir_bin=""
     fi
