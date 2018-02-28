@@ -99,3 +99,44 @@ export ARCH="amd64"
     [ "$status" -eq 0 ]
 }
 
+@test "no-x-file" {
+
+    sbpl-pkg "no-x/foo"
+
+    run ./sbpl.sh $@
+    echo "output: $output" 1>&2
+    echo "status: $status" 1>&2
+
+    [ -x "vendor/bin/$OS/$ARCH/foo" ]
+}
+
+@test "no-x-dir" {
+
+    sbpl-pkg "no-x"
+
+    run ./sbpl.sh $@
+    echo "output: $output" 1>&2
+    echo "status: $status" 1>&2
+
+    [ ! -f "vendor/bin/$OS/$ARCH/foo" ]
+    [ ! -f "vendor/bin/$OS/$ARCH/foo.sh" ]
+    [ ! -f "vendor/bin/$OS/$ARCH/bar" ]
+    [ ! -f "vendor/bin/$OS/$ARCH/bar.sh" ]
+}
+
+@test "nox-x-filter" {
+
+    sbpl-pkg "no-x/*.sh"
+
+    run ./sbpl.sh $@
+    echo "output: $output" 1>&2
+    echo "status: $status" 1>&2
+
+    [ ! -f "vendor/bin/$OS/$ARCH/foo" ]
+    [   -x "vendor/bin/$OS/$ARCH/foo.sh" ]
+    [ ! -f "vendor/bin/$OS/$ARCH/bar" ]
+    [   -x "vendor/bin/$OS/$ARCH/bar.sh" ]
+
+}
+
+
