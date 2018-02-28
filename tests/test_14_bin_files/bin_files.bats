@@ -18,8 +18,8 @@ function setup () {
 }
 
 function teardown () {
-#    rm -rf vendor
-    rm -f sbpl-pkg.sh.lock*
+    rm -rf vendor
+    rm -f sbpl-pkg.*
 }
 
 export OS="linux"
@@ -87,5 +87,15 @@ export ARCH="amd64"
     [   -f "vendor/bin/$OS/$ARCH/bar" ]
     [ ! -f "vendor/bin/$OS/$ARCH/bar.sh" ]
 
+}
+
+@test "empty" {
+    
+    sbpl-pkg ""
+
+    run ./sbpl.sh $@
+    echo "output: $output" 1>&2
+    echo "status: $status" 1>&2
+    [ "$status" -eq 0 ]
 }
 

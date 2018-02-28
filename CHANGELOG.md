@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Integration testing on OSX
 ### Changed
 - bin dir include and filter
+- fix empty bin dir variable
 
 ## [0.3.0] - 2018-02-26
 ### Added
