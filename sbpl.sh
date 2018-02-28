@@ -204,16 +204,24 @@ function sbpl_get () {
 
         if [ "$result" -eq 0 ]; then
             mkdir -p "$sbpl_dir_bin"
-
             pkg_path_bin="$pkg_path/$pkg_dir_bin"
+
+            # if "pkg_dir_bin" is a     select            and
+            # file                      the file          add +x
+            # dir                       executable files
+            # search pattern            matching files    add +x
 
             if [ -d "$pkg_path_bin" ]; then
                 pkg_path_bin="$pkg_path_bin/*"
+                skip_x_filter=false
+            else
+                skip_x_filter=true
             fi
 
             for f in $pkg_path_bin; do
-                if [ -f $f ] && [ -x $f ]; then
-                    ln -sf $f "$sbpl_dir_bin/."
+                if [ -f "$f" ] && ( [ -x "$f" ] || $skip_x_filter) ; then
+                    ln -sf "$f" "$sbpl_dir_bin/."
+                    if $skip_x_filter; then chmod +x "$f"; fi
                 fi
             done
         else
