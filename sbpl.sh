@@ -147,7 +147,7 @@ function sbpl_get () {
     # Check if package is present
     if [ ! -d "$pkg_dir" ] ; then
 
-        printf "Get package: $pkg\n"
+        printf "Get package: $OS/$ARCH/$pkg\n"
 
         mkdir -p "$pkg_dir"
 

@@ -33,7 +33,7 @@ function sbpl-pkg () {
     echo "ouput: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 42 ]
-    [ "${lines[0]}" = "Get package: test-0.0.0" ]
+    [ "${lines[0]}" = "Get package: $OS/$ARCH/test-0.0.0" ]
     [ "${lines[1]}" = "CURL-TEST-ERROR" ]
     [ "${lines[2]}" = "Error while downloading 'test-0.0.0'" ]
     [ "${lines[3]}" = "'sbpl-pkg.sh' failed with status 42" ]
@@ -62,7 +62,7 @@ function sbpl-pkg () {
     echo "ouput: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 43 ]
-    [ "${lines[0]}" = "Get package: test-0.0.0" ]
+    [ "${lines[0]}" = "Get package: $OS/$ARCH/test-0.0.0" ]
     [ "${lines[1]}" = "BSDTAR-TEST-ERROR" ]
     # ................................................ 100%
     [ "${lines[3]}" = "Error while extracting 'vendor/tmp/linux/amd64/test-0.0.0'" ]
@@ -84,7 +84,7 @@ function sbpl-pkg () {
     echo "ouput: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 44 ]
-    [ "${lines[0]}" = "Get package: test-0.0.0" ]
+    [ "${lines[0]}" = "Get package: $OS/$ARCH/test-0.0.0" ]
     [ "${lines[1]}" = "GIT-CLONE-TEST-ERROR" ]
     [ "${lines[2]}" = "Error while cloning repo 'test-0.0.0'" ]
     [ "${lines[3]}" = "'sbpl-pkg.sh' failed with status 44" ]
@@ -110,7 +110,7 @@ function sbpl-pkg () {
     echo "ouput: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 45 ]
-    [ "${lines[0]}" = "Get package: test-0.0.0" ]
+    [ "${lines[0]}" = "Get package: $OS/$ARCH/test-0.0.0" ]
     [ "${lines[1]}" = "GIT-CHECKOUT-TEST-ERROR" ]
     [ "${lines[2]}" = "Error while checking out branch/tag '0.0.0'" ]
     [ "${lines[3]}" = "'sbpl-pkg.sh' failed with status 45" ]
