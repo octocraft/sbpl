@@ -290,6 +290,7 @@ function usage () {
     printf "clean   - clear vendor dir\n"
     printf "version - print sbpl version information\n"
     printf "envvars - print vars used by sbpl. Pass a var name to filter the list\n"
+    printf "get     - download package\n"
 
     return 0
 }
@@ -407,6 +408,7 @@ if ! [ -z ${1+x} ]; then
         version*)   show_version $@;    result=$?; ;;
         init*)      init $@;            result=$?; ;;
         envvars*)   envvars $@;         result=$?; ;;
+        get*)       sbpl_get $@;        result=$?; ;;
         *)   unknown_option $cmd $@;    result=$?; ;;
     esac;
 else

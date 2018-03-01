@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- get command to download packages from shell
 - Integration testing on OSX
 - Indicate OS/ARCH while downloading packages
 ### Changed

@@ -12,7 +12,7 @@ export SBPL_VER="$(cat ../data/sbpl_version)"
     [ "${lines[3]}" = "clean   - clear vendor dir" ]
     [ "${lines[4]}" = "version - print sbpl version information" ]
     [ "${lines[5]}" = "envvars - print vars used by sbpl. Pass a var name to filter the list" ]
-
+    [ "${lines[6]}" = "get     - download package" ]
 }
 
 @test "sbpl version" {
