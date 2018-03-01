@@ -72,6 +72,8 @@ Note: `/sbpl.sh` calls `sbpl-pkg.sh` every time to check if it needs to download
 
 `envvars` - Returns all variables used by sbpl. You may pass a variable name to filter the list
 
+`get` - Download a package via shell. The syntax for this command is the same as sbpl_get
+
 If called without further arguments `/sbpl.sh` will download packages if needed.
 
 ### API
