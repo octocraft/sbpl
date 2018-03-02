@@ -115,10 +115,15 @@ Note: `url` and `bin-dir` are evaluated using eval. Use single quotes to access 
 
 **Platform**
 
-`$sbpl_os` - Operating system 
+`$sbpl_os` - Operating system (this may be overwritten by the caller)
 (android, darwin, dragonfly, freebsd, linux, netbsd, openbsd, plan9, solaris, windows or `$sbpl_osTYPE` if nothing from the list)
 
-`$sbpl_arch` - Architecture (arm64, arm, 368, amd64, ppc64le, ppc64, mips64le, mips64, mipsle, mips or `$HOSTTYPE` if nothing from the list)
+`$_sbpl_os` - Operating system (actual OS)
+
+`$sbpl_arch` - Architecture (this may be overwritten by the caller)
+(arm64, arm, 368, amd64, ppc64le, ppc64, mips64le, mips64, mipsle, mips or `$HOSTTYPE` if nothing from the list)
+
+`$sbpl_arch` - Architecture (actual ARCH)
 
 **Directories**
 

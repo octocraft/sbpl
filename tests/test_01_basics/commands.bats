@@ -55,32 +55,39 @@ export SBPL_VER="$(cat ../data/sbpl_version)"
 
 @test "sbpl envvars" {
 
-    export sbpl_os="linux"
-    export sbpl_arch="amd64"
+    export sbpl_os="generic-os"
+    export sbpl_arch="generic-arch"
 
     run ./sbpl.sh envvars
+    echo "output: $output" 1>&2
     [ "$status" -eq 0 ]    
 
     unset sbpl_os
     unset sbpl_arch
     eval "$output"
-
+    
     # output
-    [ "$sbpl_os"   = "linux" ]
-    [ "$sbpl_arch" = "amd64" ]
+    [ "$sbpl_os"   = "generic-os" ]
+    [ "$sbpl_arch" = "generic-arch" ]
+   
+    [ ! -z ${_sbpl_os+x} ] 
+    [ ! "$sbpl_os"   = "$_sbpl_os" ]
+    [ ! -z ${_sbpl_arch+x} ]
+    [ ! "$sbpl_arch" = "$_sbpl_arch" ]
+        
     [ "$sbpl_version" = "$SBPL_VER" ]
     
     [ "$sbpl_dir_pkgs" = "vendor" ]
     [ "$sbpl_dir_bins" = "vendor/bin" ]
     [ "$sbpl_dir_tmps" = "vendor/tmp" ]
     
-    [ "$sbpl_dir_pkg" = "vendor/linux/amd64" ]
-    [ "$sbpl_dir_bin" = "vendor/bin/linux/amd64" ]
-    [ "$sbpl_dir_tmp" = "vendor/tmp/linux/amd64" ]
+    [ "$sbpl_dir_pkg" = "vendor/generic-os/generic-arch" ]
+    [ "$sbpl_dir_bin" = "vendor/bin/generic-os/generic-arch" ]
+    [ "$sbpl_dir_tmp" = "vendor/tmp/generic-os/generic-arch" ]
 
-    [ "$sbpl_path_pkg" = "$(pwd)/vendor/linux/amd64" ]
-    [ "$sbpl_path_bin" = "$(pwd)/vendor/bin/linux/amd64" ]
-    [ "$sbpl_path_tmp" = "$(pwd)/vendor/tmp/linux/amd64" ]
+    [ "$sbpl_path_pkg" = "$(pwd)/vendor/generic-os/generic-arch" ]
+    [ "$sbpl_path_bin" = "$(pwd)/vendor/bin/generic-os/generic-arch" ]
+    [ "$sbpl_path_tmp" = "$(pwd)/vendor/tmp/generic-os/generic-arch" ]
 
     # envvars with filter
     function test_envvar_filter () {
