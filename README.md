@@ -45,7 +45,17 @@ sbpl_get 'git'     'sbpl' 'master' 'https://github.com/octocraft/${name}.git' '.
 
 ```
 
-Packages are downloaded (extracted if needed) and a symbolic link is placed in `vendor/bin/$OS/$ARCH`. Add this folder to `PATH` to make dependencies available for your apps/script. Via the `envvars` command `sbpl` returns the path to the bin dir. You can use this to include it in `PATH` like this:
+Note: `/sbpl.sh` calls `sbpl-pkg.sh` every time to check if it needs to download dependencies. It is assumed, that `sbpl-pkg.sh` runs without side effects. Keep this in mind if you include custom commands in this file.
+
+### Binaries
+
+Packages are downloaded (extracted if needed) and a symbolic link is placed in `vendor/bin/$OS/$ARCH`. Furthermore a symbolic link in `vendor/bin/current` is created. Add this folder to `PATH` to make dependencies available for your apps/script.
+
+```BASH
+export PATH="$PWD/vendor/bin/current:$PATH"
+``` 
+
+Via the `envvars` command `sbpl` returns the path to the bin dir. You can use this to lock bins for a specific platform. Include it in `PATH` like this:
 
 ```BASH
 export PATH="$(./sbpl.sh envvars sbpl_path_bin):$PATH"
@@ -53,10 +63,11 @@ export PATH="$(./sbpl.sh envvars sbpl_path_bin):$PATH"
 
 You find a full example in [examples/blank](examples/blank).
 
+### Packages
 
-Note: `/sbpl.sh` calls `sbpl-pkg.sh` every time to check if it needs to download dependencies. It is assumed, that `sbpl-pkg.sh` runs without side effects. Keep this in mind if you include custom commands in this file.
+The packages are stored in `vendor/$OS/$ARCH/${name}-${version}`. A link is created in `vendor/current`.
 
-### Commands
+## Commands
 
 `help` - Prints usage information and a list of commands which may be used
 
@@ -76,7 +87,7 @@ Note: `/sbpl.sh` calls `sbpl-pkg.sh` every time to check if it needs to download
 
 If called without further arguments `/sbpl.sh` will download packages if needed.
 
-### API
+## API
 
 `sbpl-pkg.sh` has access to certain variables and functions. 
 

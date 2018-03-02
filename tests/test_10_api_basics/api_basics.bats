@@ -12,7 +12,12 @@ function test_sbpl_mock_curl () {
     echo "status: $status" 1>&2
     echo "output: $output" 1>&2
     [ "$status" -eq 0 ]
+
     [ -d "vendor/$OS/$ARCH/$TEST_EXPECTED_URL" ]
+    [ -d "vendor/current/$TEST_EXPECTED_URL" ]
+    
+    [ -f "vendor/bin/$OS/$ARCH/test" ]
+    [ -f "vendor/bin/current/test" ]
 }
 
 function setup () {

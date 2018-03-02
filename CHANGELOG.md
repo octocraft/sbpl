@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - get command to download packages from shell
 - Integration testing on OSX
 - Indicate OS/ARCH while downloading packages
+- Make packages and binaries accessible via current dir
 ### Changed
 - bin dir include and filter
 - fix empty bin dir variable
