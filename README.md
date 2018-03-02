@@ -17,7 +17,7 @@ chmod u+x sbpl.sh
 ```
 ### Dependencies
 
-Though `sbpl` was developed with as little dependencies as possible, they cant be avoided. `sbpl` requires `curl` to be available. Furthermore `bsdtar` if you want to download archives and `git` if you want to check out repos.
+Though `sbpl` was developed with as little dependencies as possible, they cant be avoided. `sbpl` requires `curl` or `wget` to be available. Furthermore `bsdtar` if you want to download archives and `git` if you want to check out repos.
 
 Install all dependencies
 

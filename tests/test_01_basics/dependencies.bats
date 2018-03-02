@@ -13,7 +13,6 @@ function sbpl-pkg () {
 }
 
 function setup () {
-    mkdir -p "vendor/0-0-linux-amd64"
     mkdir -p dependencies
 }
 
@@ -23,7 +22,7 @@ function teardown () {
     rm -f sbpl-pkg.sh*
 }
 
-@test "no curl" {
+@test "no curl and no wget" {
 
     sbpl-pkg "file"
 
@@ -31,15 +30,27 @@ function teardown () {
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 2 ]
-    [ "${lines[0]}" = "Dependency 'curl' not found" ]
-    [ "${lines[1]}" = "'sbpl-pkg.sh' failed with status 2" ]
+    [ "${lines[0]}" = "Neither 'curl' nor 'wget' found" ]
 }
 
-@test "no bsdtar" {
+@test "no bsdtar (curl)" {
 
     sbpl-pkg "archive"
 
     ln -s $(command -v curl) dependencies/curl    
+
+    run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
+    echo "output: $output" 1>&2
+    echo "status: $status" 1>&2
+    [ "$status" -eq 2 ]
+    [ "${lines[0]}" = "Dependency 'bsdtar' not found" ]
+}
+
+@test "no bsdtar (wget)" {
+
+    sbpl-pkg "archive"
+
+    ln -s $(command -v wget) dependencies/curl
 
     run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
