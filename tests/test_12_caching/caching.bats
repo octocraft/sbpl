@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
-export OS="linux"
-export ARCH="amd64"
+export sbpl_os="linux"
+export sbpl_arch="amd64"
 
 function curl () {
     export TEST_PACKGE="package/test"
@@ -16,24 +16,24 @@ export -f curl
     rm -f sbpl-pkg.sh.lock*
     
     run ./sbpl.sh
-    [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]    
+    [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]    
 }
 
 @test "dont download pkg" {
 
-    rm "vendor/$OS/$ARCH/test-0.0.0/test"
+    rm "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test"
 
     run ./sbpl.sh
-    ! [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]
+    ! [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 }
 
 @test "download pkg after clean" {
 
     ./sbpl.sh clean
-    ! [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]
+    ! [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 
     run ./sbpl.sh
-    [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]
+    [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 }
 
 @test "remove pkg on error" {
@@ -49,7 +49,7 @@ export -f curl
 
     run ./sbpl.sh
     echo "output: $output" 1>&2
-    [ ! -d "vendor/$OS/$ARCH/test-0.0.0" ]
+    [ ! -d "vendor/$sbpl_os/$sbpl_arch/test-0.0.0" ]
 
     rm -rf vendor
     rm -f sbpl-pkg.sh.lock*

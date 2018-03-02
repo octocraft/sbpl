@@ -12,10 +12,10 @@ eval "$(./sbpl.sh envvars)"
     [ "$?" -eq 0 ]
 
     # Check file
-    [ -f "vendor/bin/$OS/$ARCH/foo" ]
+    [ -f "vendor/bin/$sbpl_os/$sbpl_arch/foo" ]
 
     # Check command
-    [ "$(./vendor/bin/$OS/$ARCH/foo)" = "{\"foo\": \"bar\"}" ]
+    [ "$(./vendor/bin/$sbpl_os/$sbpl_arch/foo)" = "{\"foo\": \"bar\"}" ]
 }
 
 @test "Get package: foo-1.0.0 (don't download)" {
@@ -35,7 +35,7 @@ eval "$(./sbpl.sh envvars)"
     [ "$?" -eq 0 ]
 
     # Check file
-    ! [ -f "vendor/bin/$OS/$ARCH/foo" ]
+    ! [ -f "vendor/bin/$sbpl_os/$sbpl_arch/foo" ]
 
     # Test the tester
     [ "$(foo)" = "hello world" ]

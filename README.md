@@ -49,7 +49,7 @@ Note: `/sbpl.sh` calls `sbpl-pkg.sh` every time to check if it needs to download
 
 ### Binaries
 
-Packages are downloaded (extracted if needed) and a symbolic link is placed in `vendor/bin/$OS/$ARCH`. Furthermore a symbolic link in `vendor/bin/current` is created. Add this folder to `PATH` to make dependencies available for your apps/script.
+Packages are downloaded (extracted if needed) and a symbolic link is placed in `vendor/bin/$sbpl_os/$sbpl_arch`. Furthermore a symbolic link in `vendor/bin/current` is created. Add this folder to `PATH` to make dependencies available for your apps/script.
 
 ```BASH
 export PATH="$PWD/vendor/bin/current:$PATH"
@@ -65,7 +65,7 @@ You find a full example in [examples/blank](examples/blank).
 
 ### Packages
 
-The packages are stored in `vendor/$OS/$ARCH/${name}-${version}`. A link is created in `vendor/current`.
+The packages are stored in `vendor/$sbpl_os/$sbpl_arch/${name}-${version}`. A link is created in `vendor/current`.
 
 ## Commands
 
@@ -104,7 +104,7 @@ Usage: sbpl_get 'target'
 
 To define the bin-dir and the url, all the variables below can be used. Additionally the name (`$name`) and version (`$version`) are exposed to those arguments. Additional options can be added to influence the bevaior of find (which is internatlly used):
 - `bin` - bin path
-- `{OS}-${ARCH}/bin` - path using variables
+- `{sbpl_os}-${sbpl_arch}/bin` - path using variables
 - `name/bin/*.exe` - path using filter for `*.exe`
 
 Note: `url` and `bin-dir` are evaluated using eval. Use single quotes to access variables provided by sbpl.
@@ -115,10 +115,10 @@ Note: `url` and `bin-dir` are evaluated using eval. Use single quotes to access 
 
 **Platform**
 
-`$OS` - Operating system 
-(android, darwin, dragonfly, freebsd, linux, netbsd, openbsd, plan9, solaris, windows or `$OSTYPE` if nothing from the list)
+`$sbpl_os` - Operating system 
+(android, darwin, dragonfly, freebsd, linux, netbsd, openbsd, plan9, solaris, windows or `$sbpl_osTYPE` if nothing from the list)
 
-`$ARCH` - Architecture (arm64, arm, 368, amd64, ppc64le, ppc64, mips64le, mips64, mipsle, mips or `$HOSTTYPE` if nothing from the list)
+`$sbpl_arch` - Architecture (arm64, arm, 368, amd64, ppc64le, ppc64, mips64le, mips64, mipsle, mips or `$HOSTTYPE` if nothing from the list)
 
 **Directories**
 
@@ -129,11 +129,11 @@ Note: `url` and `bin-dir` are evaluated using eval. Use single quotes to access 
 `$sbpl_dir_tmps` - Relative path to tmp dir (`$sbpl_dir_pkgs/tmp`)
 
 
-`$sbpl_dir_pkg` - Relative path to platform vendor dir (`vendor/$OS/$ARCH`)
+`$sbpl_dir_pkg` - Relative path to platform vendor dir (`vendor/$sbpl_os/$sbpl_arch`)
 
-`$sbpl_dir_bin` - Relative path to platform bin dir (`$sbpl_dir_pkgs/bin/$OS/$ARCH`)
+`$sbpl_dir_bin` - Relative path to platform bin dir (`$sbpl_dir_pkgs/bin/$sbpl_os/$sbpl_arch`)
 
-`$sbpl_dir_tmp` - Relative path to platform bin dir (`$sbpl_dir_pkgs/tmp/$OS/$ARCH`)
+`$sbpl_dir_tmp` - Relative path to platform bin dir (`$sbpl_dir_pkgs/tmp/$sbpl_os/$sbpl_arch`)
 
 
 `$sbpl_path_pkg` - Absolute path to platform vendor dir (`$PWD/$sbpl_dir_pkg`)

@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
-export OS="linux"
-export ARCH="amd64"
+export sbpl_os="linux"
+export sbpl_arch="amd64"
 
 function curl () {
     export TEST_PACKGE="package/test"
@@ -27,7 +27,7 @@ function sbpl-pkg () {
     run ./sbpl.sh
     
     # check pkg
-    [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]    
+    [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]    
 
     # Check lock file
     [ -f "sbpl-pkg.sh.lock-linux-amd64" ]
@@ -36,13 +36,13 @@ function sbpl-pkg () {
 @test "dont download pkg" {
     
     # remove file from pkg
-    rm -r "vendor/$OS/$ARCH/test-0.0.0"
+    rm -r "vendor/$sbpl_os/$sbpl_arch/test-0.0.0"
 
     # re-run sbpl
     run ./sbpl.sh
 
     # check if file is still missing (no re-donwload)
-    ! [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]
+    ! [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 }
 
 @test "dont download pkg (pkg new timestamp)" {
@@ -54,7 +54,7 @@ function sbpl-pkg () {
     run ./sbpl.sh
     
     # check if file is still missing (no re-donwload)
-    ! [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]
+    ! [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 }
 
 @test "download pkg (new pkg content)" {
@@ -66,19 +66,19 @@ function sbpl-pkg () {
     run ./sbpl.sh
 
     # check pkg
-    [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]    
+    [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]    
 }
 
-@test "download pkg (new OS/ARCH)" {
+@test "download pkg (new sbpl_os/sbpl_arch)" {
 
-    export OS="windows"
-    export ARCH="386"
+    export sbpl_os="windows"
+    export sbpl_arch="386"
  
     # re-run sbpl
     run ./sbpl.sh
     
     # check pkg
-    [ -f "vendor/$OS/$ARCH/test-0.0.0/test" ]
+    [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 
     # Check lock file
     [ -f "sbpl-pkg.sh.lock-windows-386" ]

@@ -4,8 +4,8 @@ function mock_path () {
     ./sbpl_mock_path.bash $@
 }
 
-export OS="linux"
-export ARCH="amd64"
+export sbpl_os="linux"
+export sbpl_arch="amd64"
 
 function sbpl-pkg () {
     printf "#!/bin/bash\n\nsbpl_get '$1' 0 0 0 0" > sbpl-pkg.sh

@@ -8,8 +8,8 @@ function curl () {
     $BATS_TEST_DIRNAME/sbpl_mock_curl.bash $@
 }
 
-export OS=""
-export ARCH=""
+export sbpl_os=""
+export sbpl_arch=""
 export target="test-0.0.0"
 export -f bsdtar
 export -f curl

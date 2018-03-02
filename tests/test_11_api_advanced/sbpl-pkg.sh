@@ -1,10 +1,10 @@
 #!/bin/bash
 set -eu
 
-export OS="windows"
-export ARCH="386"
+export sbpl_os="windows"
+export sbpl_arch="386"
 sbpl_get 'archive' 'test' '0.0.0' '${name}-${version}'
 
-export OS="linux"
-export ARCH="amd64"
+export sbpl_os="linux"
+export sbpl_arch="amd64"
 sbpl_get 'archive' 'test' '0.0.0' '${name}-${version}'
