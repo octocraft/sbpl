@@ -51,7 +51,7 @@ function export_platform_info () {
     fi
 }
 
-function sbpl_locations () {
+function sbpl_env () {
 
     export sbpl_dir_pkg="$sbpl_dir_pkgs/$OS/$ARCH"
     export sbpl_dir_bin="$sbpl_dir_bins/$OS/$ARCH"
@@ -109,22 +109,22 @@ function sbpl_get () {
         printf "git     'name' 'branch/tag' 'url' 'bin_dir'\n" 1>&2
     }
 
-    # Check arguments
+    # Check number of arguments
     if [ "$#" -lt 4 ]; then sbpl_usage; return 2; fi
-
-    target=$1
 
     # Check dependencies
     check_dependency curl
+    # Check target
+    target="$1"
     case "$target" in
         file)                                           ;;
         archive)    check_dependency bsdtar;            ;;
         git)        check_dependency git                ;;
-        *)          printf "Unknown option $target\n"
+        *)          printf "Unknown option $target\n" 1>&2
                     sbpl_usage; return 2;               ;;
     esac
 
-    # Get Arguments and eval vars
+    # Process arguments
     name=$2
     version=$3
     url=$(eval "printf \"$4\"")
@@ -136,7 +136,7 @@ function sbpl_get () {
     fi
 
     # Update Locations
-    sbpl_locations
+    sbpl_env
 
     pkg="${name}-${version}"
     pkg_dir="$sbpl_dir_pkg/$pkg"
@@ -155,8 +155,11 @@ function sbpl_get () {
 
             tmpfile="$sbpl_dir_tmp/$pkg"
             mkdir -p "$sbpl_dir_tmp"
-            curl -fSL# "$url" -o "$tmpfile" 2>&1 | tee 
-            result=${PIPESTATUS[0]}
+
+            set +e 
+            (curl -fSL# "$url" -o "$tmpfile" 2>&1)
+            result=$?
+            set -e
             
             if [ "$result" -ne 0 ]; then
                 printf "Error while downloading '%s'\n" "$url" 1>&2
@@ -165,9 +168,11 @@ function sbpl_get () {
                 if [ "$target" = "archive" ]; then
                 
                     numfiles=$(bsdtar tf $tmpfile | wc -l)
-                
-                    bsdtar xvf "$tmpfile" -C "$pkg_dir" 2>&1 | display_progress $numfiles
-                    result=${PIPESTATUS[0]}
+               
+                    set +e 
+                    (bsdtar xvf "$tmpfile" -C "$pkg_dir" 2>&1 | display_progress $numfiles; return ${PIPESTATUS[0]})
+                    result=$?
+                    set -e
 
                     if [ "$result" -ne 0 ]; then
                         printf "Error while extracting '%s'\n" "$tmpfile" 1>&2
@@ -180,16 +185,20 @@ function sbpl_get () {
             fi
         elif [ "$target" = "git" ]; then
        
-            git clone "$url" "$pkg_dir" | tee
-            result=${PIPESTATUS[0]}
+            set +e
+            (git clone "$url" "$pkg_dir")
+            result=$?
+            set -e
 
             if [ "$result" -ne 0 ]; then
                 printf "Error while cloning repo '%s'\n" "$url" 1>&2
             else
 
                 pushd "$pkg_dir" > /dev/null
-                    git checkout "$version" | tee
-                    result=${PIPESTATUS[0]}
+                    set +e
+                    (git checkout "$version")
+                    result=$?
+                    set -e
                 popd  > /dev/null
     
                 if [ "$result" -ne 0 ]; then
@@ -245,23 +254,14 @@ function get_packages () {
     # Check pkg file
     if [ -f "$PWD/$sbpl_pkg" ]; then
 
-        if ! command -v diff > /dev/null; then
-            function diff () {
-                if [ "$(cat $1)" = "$(cat $2)" ]; then
-                    return 0
-                else
-                    return 1
-                fi
-            }
-        fi
-
         # Check lock file & skip update if no changes
-        if [ -f "$PWD/$sbpl_pkg_lock" ] && diff "$PWD/$sbpl_pkg" "$PWD/$sbpl_pkg_lock" > /dev/null; then
+        if [ -f "$PWD/$sbpl_pkg_lock" ] && [ "$(< "$PWD/$sbpl_pkg")" = "$(< "$PWD/$sbpl_pkg_lock")" ]; then
             return 0
         fi
 
         # Run pkg script
-        command "$PWD/$sbpl_pkg" && result=$? || result=$?
+        "$PWD/$sbpl_pkg" | cat
+        result=${PIPESTATUS[0]}
 
         # Clear tmp
         rm -rf "$PWD/$sbpl_dir_tmps/*"
@@ -318,7 +318,7 @@ function clean () {
 function upgrade () {
 
     # Update Locations
-    sbpl_locations
+    sbpl_env
 
     sbpl_get 'file' 'sbpl' 'master' 'https://raw.githubusercontent.com/octocraft/${name}/${version}/sbpl.sh'
 
@@ -362,7 +362,7 @@ function envvars () {
     }
 
     # Update Locations
-    sbpl_locations
+    sbpl_env
 
     if ! [ -z ${1+x} ]; then
         export var_filter="$1"
@@ -397,8 +397,9 @@ function envvars () {
 
 # Setup environment
 export_platform_info
+
+export -f sbpl_env
 export -f sbpl_get
-export -f sbpl_locations
 
 # Parse command line arguments
 if ! [ -z ${1+x} ]; then

@@ -84,7 +84,11 @@ export SBPL_VER="$(cat ../data/sbpl_version)"
 
     # envvars with filter
     function test_envvar_filter () {
+        export OS
+        export ARCH
+
         var_name="$1"
+
         if [ "$(eval 'echo $'"$var_name")" = "$(./sbpl.sh envvars "$var_name")" ]; then
             return 0
         else
