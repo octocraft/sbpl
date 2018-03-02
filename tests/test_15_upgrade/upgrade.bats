@@ -9,7 +9,7 @@
     target="sbpl-master"
 
     # Get copy
-    cp --dereference sbpl.sh.base sbpl.sh
+    cp -L sbpl.sh.base sbpl.sh
 
     # Pre-load package (get_package will be skipped) 
     
