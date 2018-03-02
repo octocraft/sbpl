@@ -4,7 +4,7 @@
 ./sbpl.sh
 
 # Include Packages
-export PATH="$(./sbpl.sh envvars sbpl_path_bin):$PATH"
+export PATH="$PWD/vendor/bin/current:$PATH"
 
 # Execute
 # Place your command here. All depenencies will be available

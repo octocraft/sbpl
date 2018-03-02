@@ -224,6 +224,12 @@ function sbpl_get () {
                     if $skip_x_filter; then chmod +x "$f"; fi
                 fi
             done
+
+            # Update current links
+            ln -fs "$OS/$ARCH" "$sbpl_dir_pkgs/current"
+            ln -fs "$OS/$ARCH" "$sbpl_dir_bins/current"
+            ln -fs "$pkg"      "$sbpl_dir_pkg/$name"
+
         else
             rm -rf $pkg_dir
         fi
