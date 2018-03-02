@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Indicate OS/ARCH while downloading packages
 - Make packages and binaries accessible via current dir
 - use wget or curl (whatever is available)
+- vars to indicate actual OS/ARCH
 ### Changed
 - bin dir include and filter
 - fix empty bin dir variable

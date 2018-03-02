@@ -18,22 +18,24 @@ function export_platform_info () {
         OSTYPE="$OS"
     fi
 
-    if [ -z ${sbpl_os+x} ]; then
-        case "$OSTYPE" in
-            android*)   sbpl_os="android"   ;;
-            darwin*)    sbpl_os="darwin"    ;;
-            dragonfly*) sbpl_os="dragonfly" ;;
-            freebsd*)   sbpl_os="freebsd"   ;;
-            linux*)     sbpl_os="linux"     ;;
-            netbsd*)    sbpl_os="netbsd"    ;;
-            openbsd*)   sbpl_os="openbsd"   ;;
-            plan9*)     sbpl_os="plan9"     ;;
-            solaris*)   sbpl_os="solaris"   ;;  
-            Windows*)   sbpl_os="windows"   ;;
-            *)          sbpl_os="$OSTYPE"   ;;
-        esac;
+    case "$OSTYPE" in
+        android*)   _sbpl_os="android"   ;;
+        darwin*)    _sbpl_os="darwin"    ;;
+        dragonfly*) _sbpl_os="dragonfly" ;;
+        freebsd*)   _sbpl_os="freebsd"   ;;
+        linux*)     _sbpl_os="linux"     ;;
+        netbsd*)    _sbpl_os="netbsd"    ;;
+        openbsd*)   _sbpl_os="openbsd"   ;;
+        plan9*)     _sbpl_os="plan9"     ;;
+        solaris*)   _sbpl_os="solaris"   ;;
+        Windows*)   _sbpl_os="windows"   ;;
+        *)          _sbpl_os="$OSTYPE"   ;;
+    esac;
 
-        export sbpl_os
+    export _sbpl_os
+
+    if [ -z ${sbpl_os+x} ]; then
+        export sbpl_os="$_sbpl_os"
     fi
 
     if [ "$sbpl_os" = "windows" ] && [ -z ${HOSTTYPE+x} ]; then
@@ -47,22 +49,24 @@ function export_platform_info () {
         fi
     fi
 
-    if [ -z ${sbpl_arch+x} ]; then
-        case "$HOSTTYPE" in
-            arm64*)     sbpl_arch="arm64"        ;;
-            arm*)       sbpl_arch="arm"          ;;
-            i386*)      sbpl_arch="368"          ;;
-            x86_64*)    sbpl_arch="amd64"        ;;
-            ppc64le*)   sbpl_arch="ppc64le"      ;;
-            ppc64*)     sbpl_arch="ppc64"        ;;
-            mips64le*)  sbpl_arch="mips64le"     ;;
-            mips64*)    sbpl_arch="mips64"       ;;
-            mipsle*)    sbpl_arch="mipsle"       ;;
-            mips*)      sbpl_arch="mips"         ;;
-            *)          sbpl_arch="$HOSTTYPE"    ;;
-        esac;
+    case "$HOSTTYPE" in
+        arm64*)     _sbpl_arch="arm64"        ;;
+        arm*)       _sbpl_arch="arm"          ;;
+        i386*)      _sbpl_arch="368"          ;;
+        x86_64*)    _sbpl_arch="amd64"        ;;
+        ppc64le*)   _sbpl_arch="ppc64le"      ;;
+        ppc64*)     _sbpl_arch="ppc64"        ;;
+        mips64le*)  _sbpl_arch="mips64le"     ;;
+        mips64*)    _sbpl_arch="mips64"       ;;
+        mipsle*)    _sbpl_arch="mipsle"       ;;
+        mips*)      _sbpl_arch="mips"         ;;
+        *)          _sbpl_arch="$HOSTTYPE"    ;;
+    esac;
 
-        export sbpl_arch
+    export _sbpl_arch
+
+    if [ -z ${sbpl_arch+x} ]; then
+        export sbpl_arch="$_sbpl_arch"
     fi
 }
 
@@ -400,7 +404,9 @@ function envvars () {
     fi
 
     print_var "sbpl_os" 
+    print_var "_sbpl_os" 
     print_var "sbpl_arch" 
+    print_var "_sbpl_arch" 
     print_var "sbpl_version"
  
     print_var "sbpl_dir_pkgs"
