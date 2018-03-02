@@ -14,48 +14,63 @@ export sbpl_dir_tmps="$sbpl_dir_pkgs/tmp"
 
 function export_platform_info () {
 
-    if [ -z ${OS+x} ]; then
-        case "$OSTYPE" in
-            android*)   OS="android";   ;;
-            darwin*)    OS="darwin";    ;;
-            dragonfly*) OS="dragonfly"; ;;
-            freebsd*)   OS="freebsd";   ;;
-            linux*)     OS="linux";     ;;
-            netbsd*)    OS="netbsd";    ;;
-            openbsd*)   OS="openbsd";   ;;
-            plan9*)     OS="plan9";     ;;
-            solaris*)   OS="solaris";   ;;  
-            windows*)   OS="windows";   ;;
-            *)          OS="$OSTYPE";   ;;
-        esac;
-
-        export OS
+    if [ -z ${OSTYPE+x} ] && [ ! -z ${OS+x} ]; then
+        OSTYPE="$OS"
     fi
 
-    if [ -z ${ARCH+x} ]; then
-        case "$HOSTTYPE" in
-            arm64*)     ARCH="arm64"        ;;
-            arm*)       ARCH="arm"          ;;
-            i386*)      ARCH="368"          ;;
-            x86_64*)    ARCH="amd64"        ;;
-            ppc64le*)   ARCH="ppc64le"      ;;
-            ppc64*)     ARCH="ppc64"        ;;
-            mips64le*)  ARCH="mips64le"     ;;
-            mips64*)    ARCH="mips64"       ;;
-            mipsle*)    ARCH="mipsle"       ;;
-            mips*)      ARCH="mips"         ;;
-            *)          ARCH="$HOSTTYPE"    ;;
+    if [ -z ${sbpl_os+x} ]; then
+        case "$OSTYPE" in
+            android*)   sbpl_os="android"   ;;
+            darwin*)    sbpl_os="darwin"    ;;
+            dragonfly*) sbpl_os="dragonfly" ;;
+            freebsd*)   sbpl_os="freebsd"   ;;
+            linux*)     sbpl_os="linux"     ;;
+            netbsd*)    sbpl_os="netbsd"    ;;
+            openbsd*)   sbpl_os="openbsd"   ;;
+            plan9*)     sbpl_os="plan9"     ;;
+            solaris*)   sbpl_os="solaris"   ;;  
+            Windows*)   sbpl_os="windows"   ;;
+            *)          sbpl_os="$OSTYPE"   ;;
         esac;
 
-        export ARCH
+        export sbpl_os
+    fi
+
+    if [ "$sbpl_os" = "windows" ] && [ -z ${HOSTTYPE+x} ]; then
+        if [ -z ${PROCESSOR_ARCHITEW6432+x} ]; then
+            HOSTTYPE="$PROCESSOR_ARCHITEW6432"
+        else
+            case "$PROCESSOR_ARCHITECTURE" in
+                x86)    HOSTTYPE="i386"                     ;;
+                *)      HOSTTYPE="$PROCESSOR_ARCHITECTURE"  ;;
+            esac;
+        fi
+    fi
+
+    if [ -z ${sbpl_arch+x} ]; then
+        case "$HOSTTYPE" in
+            arm64*)     sbpl_arch="arm64"        ;;
+            arm*)       sbpl_arch="arm"          ;;
+            i386*)      sbpl_arch="368"          ;;
+            x86_64*)    sbpl_arch="amd64"        ;;
+            ppc64le*)   sbpl_arch="ppc64le"      ;;
+            ppc64*)     sbpl_arch="ppc64"        ;;
+            mips64le*)  sbpl_arch="mips64le"     ;;
+            mips64*)    sbpl_arch="mips64"       ;;
+            mipsle*)    sbpl_arch="mipsle"       ;;
+            mips*)      sbpl_arch="mips"         ;;
+            *)          sbpl_arch="$HOSTTYPE"    ;;
+        esac;
+
+        export sbpl_arch
     fi
 }
 
 function sbpl_env () {
 
-    export sbpl_dir_pkg="$sbpl_dir_pkgs/$OS/$ARCH"
-    export sbpl_dir_bin="$sbpl_dir_bins/$OS/$ARCH"
-    export sbpl_dir_tmp="$sbpl_dir_tmps/$OS/$ARCH"
+    export sbpl_dir_pkg="$sbpl_dir_pkgs/$sbpl_os/$sbpl_arch"
+    export sbpl_dir_bin="$sbpl_dir_bins/$sbpl_os/$sbpl_arch"
+    export sbpl_dir_tmp="$sbpl_dir_tmps/$sbpl_os/$sbpl_arch"
 }
 
 function sbpl_get () {
@@ -147,7 +162,7 @@ function sbpl_get () {
     # Check if package is present
     if [ ! -d "$pkg_dir" ] ; then
 
-        printf "Get package: $OS/$ARCH/$pkg\n"
+        printf "Get package: $sbpl_os/$sbpl_arch/$pkg\n"
 
         mkdir -p "$pkg_dir"
 
@@ -235,8 +250,8 @@ function sbpl_get () {
             done
 
             # Update current links
-            ln -fs "$OS/$ARCH" "$sbpl_dir_pkgs/current"
-            ln -fs "$OS/$ARCH" "$sbpl_dir_bins/current"
+            ln -fs "$sbpl_os/$sbpl_arch" "$sbpl_dir_pkgs/current"
+            ln -fs "$sbpl_os/$sbpl_arch" "$sbpl_dir_bins/current"
             ln -fs "$pkg"      "$sbpl_dir_pkg/$name"
 
         else
@@ -249,7 +264,7 @@ function sbpl_get () {
 
 function get_packages () {
     
-    sbpl_pkg_lock="$sbpl_pkg.lock-$OS-$ARCH"
+    sbpl_pkg_lock="$sbpl_pkg.lock-$sbpl_os-$sbpl_arch"
 
     # Check pkg file
     if [ -f "$PWD/$sbpl_pkg" ]; then
@@ -370,8 +385,8 @@ function envvars () {
         export var_filter="*"
     fi
 
-    print_var "OS" 
-    print_var "ARCH" 
+    print_var "sbpl_os" 
+    print_var "sbpl_arch" 
     print_var "sbpl_version"
  
     print_var "sbpl_dir_pkgs"

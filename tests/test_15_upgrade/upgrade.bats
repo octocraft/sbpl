@@ -4,8 +4,8 @@
 
     rm -rf vendor
 
-    export OS="linux"
-    export ARCH="amd64"
+    export sbpl_os="linux"
+    export sbpl_arch="amd64"
     target="sbpl-master"
 
     # Get copy
@@ -15,11 +15,11 @@
     
     # 1. Create dirs
     mkdir -p "vendor/tmp"
-    mkdir -p "vendor/bin/$OS/$ARCH"
-    mkdir -p "vendor/$OS/$ARCH/$target"   # <-- existens of this dir is checked by get_package
+    mkdir -p "vendor/bin/$sbpl_os/$sbpl_arch"
+    mkdir -p "vendor/$sbpl_os/$sbpl_arch/$target"   # <-- existens of this dir is checked by get_package
     
     # 2. Create files 
-    pushd "vendor/$OS/$ARCH/$target" > /dev/null
+    pushd "vendor/$sbpl_os/$sbpl_arch/$target" > /dev/null
     printf "echo test" > "sbpl.sh"
     chmod u+x "sbpl.sh"
     mkdir -p "bin"
@@ -27,7 +27,7 @@
     popd > /dev/null
 
     # 3. Create link in bin-dir
-    ln -fs "../../../$OS/$ARCH/$target/bin/sbpl" "vendor/bin/$OS/$ARCH/sbpl"
+    ln -fs "../../../$sbpl_os/$sbpl_arch/$target/bin/sbpl" "vendor/bin/$sbpl_os/$sbpl_arch/sbpl"
 
     # Call Upgrade
     run ./sbpl.sh upgrade

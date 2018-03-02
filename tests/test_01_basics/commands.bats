@@ -33,41 +33,41 @@ export SBPL_VER="$(cat ../data/sbpl_version)"
 
 @test "sbpl clean" {
 
-    export OS="linux"
-    export ARCH="amd64"
+    export sbpl_os="linux"
+    export sbpl_arch="amd64"
 
     # Create test file
-    mkdir -p "vendor/$OS/$ARCH/test"
-    echo "123" > "vendor/$OS/$ARCH/test/test.txt"
+    mkdir -p "vendor/$sbpl_os/$sbpl_arch/test"
+    echo "123" > "vendor/$sbpl_os/$sbpl_arch/test/test.txt"
 
     # test the tester
-    [ $(cat "vendor/$OS/$ARCH/test/test.txt") = "123" ]
+    [ $(cat "vendor/$sbpl_os/$sbpl_arch/test/test.txt") = "123" ]
 
     run ./sbpl.sh clean
     [ "$status" -eq 0 ]
 
-    ! [ -f "vendor/$OS/$ARCH/test/test.txt" ]
-    ! [ -d "vendor/$OS/$ARCH/test" ]
+    ! [ -f "vendor/$sbpl_os/$sbpl_arch/test/test.txt" ]
+    ! [ -d "vendor/$sbpl_os/$sbpl_arch/test" ]
 
-    unset OS
-    unset ARCH
+    unset sbpl_os
+    unset sbpl_arch
 }
 
 @test "sbpl envvars" {
 
-    export OS="linux"
-    export ARCH="amd64"
+    export sbpl_os="linux"
+    export sbpl_arch="amd64"
 
     run ./sbpl.sh envvars
     [ "$status" -eq 0 ]    
 
-    unset OS
-    unset ARCH
+    unset sbpl_os
+    unset sbpl_arch
     eval "$output"
 
     # output
-    [ "$OS"   = "linux" ]
-    [ "$ARCH" = "amd64" ]
+    [ "$sbpl_os"   = "linux" ]
+    [ "$sbpl_arch" = "amd64" ]
     [ "$sbpl_version" = "$SBPL_VER" ]
     
     [ "$sbpl_dir_pkgs" = "vendor" ]
@@ -84,8 +84,8 @@ export SBPL_VER="$(cat ../data/sbpl_version)"
 
     # envvars with filter
     function test_envvar_filter () {
-        export OS
-        export ARCH
+        export sbpl_os
+        export sbpl_arch
 
         var_name="$1"
 
@@ -96,8 +96,8 @@ export SBPL_VER="$(cat ../data/sbpl_version)"
         fi
     }
     
-    test_envvar_filter "OS"
-    test_envvar_filter "ARCH"
+    test_envvar_filter "sbpl_os"
+    test_envvar_filter "sbpl_arch"
     test_envvar_filter "sbpl_version"
 
     test_envvar_filter "sbpl_dir_pkgs"

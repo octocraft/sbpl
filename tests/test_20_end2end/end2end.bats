@@ -2,8 +2,8 @@
 
 target="sbpl-master"
 
-export OS="linux"
-export ARCH="amd64"
+export sbpl_os="linux"
+export sbpl_arch="amd64"
 export LC_NUMERIC="en_US.UTF-8"
 
 @test "archive" {
@@ -19,9 +19,9 @@ export LC_NUMERIC="en_US.UTF-8"
     [ "${PIPESTATUS[0]}" -eq 0 ] 
  
     # Check data
-    [ -f "vendor/$OS/$ARCH/$target/$target/bin/sbpl" ]
-    [ -f "vendor/bin/$OS/$ARCH/sbpl" ]
-    run ./vendor/bin/$OS/$ARCH/sbpl version
+    [ -f "vendor/$sbpl_os/$sbpl_arch/$target/$target/bin/sbpl" ]
+    [ -f "vendor/bin/$sbpl_os/$sbpl_arch/sbpl" ]
+    run ./vendor/bin/$sbpl_os/$sbpl_arch/sbpl version
     [ "$status" -eq 0 ]
     
     # Do not re-download package
@@ -44,9 +44,9 @@ export LC_NUMERIC="en_US.UTF-8"
 
     run ./sbpl.sh
     [ "$status" -eq 0 ]
-    run ./vendor/bin/$OS/$ARCH/sbpl version
+    run ./vendor/bin/$sbpl_os/$sbpl_arch/sbpl version
     [ "$status" -eq 0 ]
-    [ -f "vendor/$OS/$ARCH/$target/bin/sbpl" ]
+    [ -f "vendor/$sbpl_os/$sbpl_arch/$target/bin/sbpl" ]
 
     rm -rf vendor
     rm -f sbpl-pkg.sh.lock*
@@ -63,9 +63,9 @@ export LC_NUMERIC="en_US.UTF-8"
 
     run ./sbpl.sh
     [ "$status" -eq 0 ]
-    run ./vendor/bin/$OS/$ARCH/sbpl version
+    run ./vendor/bin/$sbpl_os/$sbpl_arch/sbpl version
     [ "$status" -eq 0 ]
-    [ -f "vendor/$OS/$ARCH/$target/sbpl" ]
+    [ -f "vendor/$sbpl_os/$sbpl_arch/$target/sbpl" ]
 
     rm -rf vendor
     rm -f sbpl-pkg.sh.lock*

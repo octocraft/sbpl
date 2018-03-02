@@ -13,10 +13,10 @@ function test_sbpl_mock_curl () {
     echo "output: $output" 1>&2
     [ "$status" -eq 0 ]
 
-    [ -d "vendor/$OS/$ARCH/$TEST_EXPECTED_URL" ]
+    [ -d "vendor/$sbpl_os/$sbpl_arch/$TEST_EXPECTED_URL" ]
     [ -d "vendor/current/$TEST_EXPECTED_URL" ]
     
-    [ -f "vendor/bin/$OS/$ARCH/test" ]
+    [ -f "vendor/bin/$sbpl_os/$sbpl_arch/test" ]
     [ -f "vendor/bin/current/test" ]
 }
 
@@ -29,36 +29,36 @@ function teardown () {
     rm -f sbpl-pkg.sh.lock*
 }
 
-@test "set OS/ARCH - windows/amd64" {
+@test "set sbpl_os/sbpl_arch - windows/amd64" {
 
-    export OS=windows
-    export ARCH=amd64
+    export sbpl_os=windows
+    export sbpl_arch=amd64
     test_sbpl_mock_curl
 }
 
-@test "set OS/ARCH - linux/x86" {
+@test "set sbpl_os/sbpl_arch - linux/x86" {
  
-    export OS=linux
-    export ARCH=x86
+    export sbpl_os=linux
+    export sbpl_arch=x86
     test_sbpl_mock_curl
 }
 
-@test "set OS/ARCH - android/arm" {
+@test "set sbpl_os/sbpl_arch - android/arm" {
 
-    export OS=android
-    export ARCH=arm
+    export sbpl_os=android
+    export sbpl_arch=arm
     test_sbpl_mock_curl
 }
 
 @test "sbpl update" {
 
-    export OS=linux
-    export ARCH=arm
+    export sbpl_os=linux
+    export sbpl_arch=arm
     test_sbpl_mock_curl "update"    
 }
 
 @test "sbpl get" {
-    export OS=linux
-    export ARCH=arm
+    export sbpl_os=linux
+    export sbpl_arch=arm
     test_sbpl_mock_curl "get" "archive" "test" "0.0.0" "test-0.0.0" 
 }

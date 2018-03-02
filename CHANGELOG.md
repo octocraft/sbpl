@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - bin dir include and filter
 - fix empty bin dir variable
+- rename OS/ARCH to sbpl_os/sbpl_arch
 
 ## [0.3.0] - 2018-02-26
 ### Added

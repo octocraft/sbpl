@@ -22,8 +22,8 @@ function teardown () {
     rm -f sbpl-pkg.*
 }
 
-export OS="linux"
-export ARCH="amd64"
+export sbpl_os="linux"
+export sbpl_arch="amd64"
 
 @test "file" {
 
@@ -33,7 +33,7 @@ export ARCH="amd64"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
 
-    [ -f "vendor/bin/$OS/$ARCH/foo" ]
+    [ -f "vendor/bin/$sbpl_os/$sbpl_arch/foo" ]
 }
 
 @test "link" {
@@ -44,7 +44,7 @@ export ARCH="amd64"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
 
-    [ -f "vendor/bin/$OS/$ARCH/foo" ]
+    [ -f "vendor/bin/$sbpl_os/$sbpl_arch/foo" ]
 }
 
 @test "file+link" {
@@ -55,8 +55,8 @@ export ARCH="amd64"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
 
-    [ -f "vendor/bin/$OS/$ARCH/foo" ]
-    [ -f "vendor/bin/$OS/$ARCH/bar" ]
+    [ -f "vendor/bin/$sbpl_os/$sbpl_arch/foo" ]
+    [ -f "vendor/bin/$sbpl_os/$sbpl_arch/bar" ]
 }
 
 @test "filter include" {
@@ -67,10 +67,10 @@ export ARCH="amd64"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
 
-    [ ! -f "vendor/bin/$OS/$ARCH/foo" ]
-    [   -f "vendor/bin/$OS/$ARCH/foo.sh" ]
-    [ ! -f "vendor/bin/$OS/$ARCH/bar" ]
-    [   -f "vendor/bin/$OS/$ARCH/bar.sh" ]
+    [ ! -f "vendor/bin/$sbpl_os/$sbpl_arch/foo" ]
+    [   -f "vendor/bin/$sbpl_os/$sbpl_arch/foo.sh" ]
+    [ ! -f "vendor/bin/$sbpl_os/$sbpl_arch/bar" ]
+    [   -f "vendor/bin/$sbpl_os/$sbpl_arch/bar.sh" ]
 
 }
 
@@ -82,10 +82,10 @@ export ARCH="amd64"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
 
-    [   -f "vendor/bin/$OS/$ARCH/foo" ]
-    [ ! -f "vendor/bin/$OS/$ARCH/foo.sh" ]
-    [   -f "vendor/bin/$OS/$ARCH/bar" ]
-    [ ! -f "vendor/bin/$OS/$ARCH/bar.sh" ]
+    [   -f "vendor/bin/$sbpl_os/$sbpl_arch/foo" ]
+    [ ! -f "vendor/bin/$sbpl_os/$sbpl_arch/foo.sh" ]
+    [   -f "vendor/bin/$sbpl_os/$sbpl_arch/bar" ]
+    [ ! -f "vendor/bin/$sbpl_os/$sbpl_arch/bar.sh" ]
 
 }
 
@@ -107,7 +107,7 @@ export ARCH="amd64"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
 
-    [ -x "vendor/bin/$OS/$ARCH/foo" ]
+    [ -x "vendor/bin/$sbpl_os/$sbpl_arch/foo" ]
 }
 
 @test "no-x-dir" {
@@ -118,10 +118,10 @@ export ARCH="amd64"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
 
-    [ ! -f "vendor/bin/$OS/$ARCH/foo" ]
-    [ ! -f "vendor/bin/$OS/$ARCH/foo.sh" ]
-    [ ! -f "vendor/bin/$OS/$ARCH/bar" ]
-    [ ! -f "vendor/bin/$OS/$ARCH/bar.sh" ]
+    [ ! -f "vendor/bin/$sbpl_os/$sbpl_arch/foo" ]
+    [ ! -f "vendor/bin/$sbpl_os/$sbpl_arch/foo.sh" ]
+    [ ! -f "vendor/bin/$sbpl_os/$sbpl_arch/bar" ]
+    [ ! -f "vendor/bin/$sbpl_os/$sbpl_arch/bar.sh" ]
 }
 
 @test "nox-x-filter" {
@@ -132,10 +132,10 @@ export ARCH="amd64"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
 
-    [ ! -f "vendor/bin/$OS/$ARCH/foo" ]
-    [   -x "vendor/bin/$OS/$ARCH/foo.sh" ]
-    [ ! -f "vendor/bin/$OS/$ARCH/bar" ]
-    [   -x "vendor/bin/$OS/$ARCH/bar.sh" ]
+    [ ! -f "vendor/bin/$sbpl_os/$sbpl_arch/foo" ]
+    [   -x "vendor/bin/$sbpl_os/$sbpl_arch/foo.sh" ]
+    [ ! -f "vendor/bin/$sbpl_os/$sbpl_arch/bar" ]
+    [   -x "vendor/bin/$sbpl_os/$sbpl_arch/bar.sh" ]
 
 }
 

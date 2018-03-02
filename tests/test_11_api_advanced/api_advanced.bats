@@ -14,7 +14,7 @@ function teardown () {
     rm -f sbpl-pkg.sh.lock*
 }
     
-@test "set OS/ARCH - mixed" {
+@test "set sbpl_os/sbpl_arch - mixed" {
 
     export TEST_EXPECTED_URL="test-0.0.0"
     export -f curl
