@@ -14,9 +14,8 @@ export LC_NUMERIC="en_US.UTF-8"
     rm -f sbpl-pkg.sh.lock*
 
     # Get Package
-    output=$(./sbpl.sh | col -bp | diff target.log -)
-    [ "$?" -eq 0 ]
-    [ "${PIPESTATUS[0]}" -eq 0 ] 
+    run ./sbpl.sh
+    [ "$status" -eq 0 ]
  
     # Check data
     [ -f "vendor/$sbpl_os/$sbpl_arch/$target/$target/bin/sbpl" ]

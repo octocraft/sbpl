@@ -75,9 +75,12 @@ function sbpl_env () {
 
 function sbpl_get () {
 
-    function check_dependency () {
+    function has_command () {
+        command -v "$1" > /dev/null
+    }
 
-        if ! command -v "$1" > /dev/null; then
+    function check_dependency () {
+        if ! has_command $1; then
             printf "Dependency '$1' not found\n" 1>&2
             exit 2
         fi
@@ -127,8 +130,19 @@ function sbpl_get () {
     # Check number of arguments
     if [ "$#" -lt 4 ]; then sbpl_usage; return 2; fi
 
-    # Check dependencies
-    check_dependency curl
+    # Check how we fetch data
+    if has_command "curl"; then
+        function fetch () { curl -fSL "$1" -o "$2"; }
+    elif has_command "wget"; then
+        function fetch () { wget -O "$2" "$1"; }
+    else
+        printf "Neither 'curl' nor 'wget' found\n" 1>&2
+        exit 2
+    fi
+
+    # Check number of arguments
+    if [ "$#" -lt 4 ]; then sbpl_usage; return 2; fi
+
     # Check target
     target="$1"
     case "$target" in
@@ -172,7 +186,7 @@ function sbpl_get () {
             mkdir -p "$sbpl_dir_tmp"
 
             set +e 
-            (curl -fSL# "$url" -o "$tmpfile" 2>&1)
+            (fetch "$url" "$tmpfile")
             result=$?
             set -e
             
