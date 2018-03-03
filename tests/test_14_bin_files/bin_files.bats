@@ -97,6 +97,20 @@ export sbpl_arch="amd64"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 0 ]
+
+    [ ! -f "vendor/bin/$sbpl_os/$sbpl_arch/foo" ] 
+}
+
+@test "basedir" {
+
+    sbpl-pkg "./"
+
+    run ./sbpl.sh $@
+    echo "output: $output" 1>&2
+    echo "status: $status" 1>&2
+    [ "$status" -eq 0 ]
+
+    [   -f "vendor/bin/$sbpl_os/$sbpl_arch/foo" ]
 }
 
 @test "no-x-file" {

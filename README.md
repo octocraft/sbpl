@@ -52,7 +52,7 @@ Note: `/sbpl.sh` calls `sbpl-pkg.sh` every time to check if it needs to download
 
 ### Binaries
 
-Packages are downloaded (extracted if needed) and a symbolic link is placed in `vendor/bin/$sbpl_os/$sbpl_arch`. Furthermore a symbolic link in `vendor/bin/current` is created. Add this folder to `PATH` to make dependencies available for your apps/script.
+Packages are downloaded (extracted if needed). If `bin_dir` is defined a symbolic link is placed in `vendor/bin/$sbpl_os/$sbpl_arch`. Furthermore a symbolic link in `vendor/bin/current` is created. Add this folder to `PATH` to make dependencies available for your apps/script.
 
 ```BASH
 export PATH="$PWD/vendor/bin/current:$PATH"
@@ -109,6 +109,8 @@ To define the bin-dir and the url, all the variables below can be used. Addition
 - `bin` - bin path
 - `{sbpl_os}-${sbpl_arch}/bin` - path using variables
 - `name/bin/*.exe` - path using filter for `*.exe`
+- `./` - base dir
+- `` - empty (bin dir is not used, no links are crated)
 
 Note: `url` and `bin-dir` are evaluated using eval. Use single quotes to access variables provided by sbpl.
 
