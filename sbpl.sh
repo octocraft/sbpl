@@ -179,18 +179,9 @@ function sbpl_get () {
 
     # Check how we fetch data
     if has_command "curl"; then
-        function fetch () {
-            curl -fsSL "$1" -o "$2"
-        }
+        function fetch () { curl -fSL# "$1" -o "$2"; }
     elif has_command "wget"; then
-        function fetch () {
-            set +e
-            _output=$(wget -nv -O "$2" "$1")
-            _result=$?
-            set -e
-            if [ $_result -ne 0 ]; then printf "%s\n" "$_output" 1>&2; fi
-            exit $_result
-        }
+       function fetch () { wget --progress=bar -O "$2" "$1"; }
     else
         printf "Neither 'curl' nor 'wget' found\n" 1>&2
         exit 2
