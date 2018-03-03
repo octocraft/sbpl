@@ -60,7 +60,7 @@ function teardown () {
 
     function wget () {
         # do not fall back
-        if [ "${3##*/}" = "archiver" ]; then return 2; fi
+        if [ "${3##*/}" = "archiver" ]; then exit 2; fi
 
         export TEST_PACKGE="package/test"
         ./sbpl_mock_curl.bash -fsSL "$4" -o "$3"
