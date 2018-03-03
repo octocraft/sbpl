@@ -27,7 +27,7 @@ function teardown () {
 }
 
 @test "pwd" {
-    
+
     run sbpl
     echo "output: $output"
     echo "status: $status"

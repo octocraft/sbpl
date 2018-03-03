@@ -60,27 +60,27 @@ export SBPL_VER="$(cat ../data/sbpl_version)"
 
     run ./sbpl.sh envvars
     echo "output: $output" 1>&2
-    [ "$status" -eq 0 ]    
+    [ "$status" -eq 0 ]
 
     unset sbpl_os
     unset sbpl_arch
     eval "$output"
-    
+
     # output
     [ "$sbpl_os"   = "generic-os" ]
     [ "$sbpl_arch" = "generic-arch" ]
-   
-    [ ! -z ${_sbpl_os+x} ] 
+
+    [ ! -z ${_sbpl_os+x} ]
     [ ! "$sbpl_os"   = "$_sbpl_os" ]
     [ ! -z ${_sbpl_arch+x} ]
     [ ! "$sbpl_arch" = "$_sbpl_arch" ]
-        
+
     [ "$sbpl_version" = "$SBPL_VER" ]
-    
+
     [ "$sbpl_dir_pkgs" = "vendor" ]
     [ "$sbpl_dir_bins" = "vendor/bin" ]
     [ "$sbpl_dir_tmps" = "vendor/tmp" ]
-    
+
     [ "$sbpl_dir_pkg" = "vendor/generic-os/generic-arch" ]
     [ "$sbpl_dir_bin" = "vendor/bin/generic-os/generic-arch" ]
     [ "$sbpl_dir_tmp" = "vendor/tmp/generic-os/generic-arch" ]
@@ -102,7 +102,7 @@ export SBPL_VER="$(cat ../data/sbpl_version)"
             retrun 1
         fi
     }
-    
+
     test_envvar_filter "sbpl_os"
     test_envvar_filter "sbpl_arch"
     test_envvar_filter "sbpl_version"

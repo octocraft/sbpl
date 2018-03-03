@@ -158,7 +158,7 @@ function sbpl_get () {
             result="$?"
             set -e
         fi
-    
+
         if [ "$result" -ne 0 ]; then
             printf "No suitable tool to extract archive found\n" 1>&2
         fi
@@ -248,11 +248,11 @@ function sbpl_get () {
             (fetch "$url" "$tmpfile")
             result="$?"
             set -e
-            
+
             if [ "$result" -ne 0 ]; then
                 printf "Error while downloading '%s'\n" "$url" 1>&2
             else
-            
+
                 if [ "$target" = "archive" ]; then
 
                     set +e
@@ -291,7 +291,7 @@ function sbpl_get () {
                     printf "Error while checking out branch/tag '%s'\n" "$version" 1>&2
                 fi
             fi
-        else 
+        else
             printf "Unknown option $1\n"
             sbpl_usage
             result=2
@@ -334,7 +334,7 @@ function sbpl_get () {
 }
 
 function get_packages () {
-    
+
     sbpl_pkg_lock="$sbpl_pkg.lock-$sbpl_os-$sbpl_arch"
 
     # Check pkg file
@@ -355,7 +355,7 @@ function get_packages () {
         # Update lock file
         if [ $result -eq 0 ]; then
             cp -p "$PWD/$sbpl_pkg" "$PWD/$sbpl_pkg_lock"
-        else 
+        else
             rm -f "$PWD/$sbpl_pkg_lock"
             printf "'sbpl-pkg.sh' failed with status $result\n"
             return $result
@@ -410,7 +410,7 @@ function upgrade () {
 
     mkdir -p "$sbpl_dir_tmp"
     cp "$sbpl_dir_bin/sbpl" "$sbpl_dir_tmp/sbpl.sh"
-    mv "$sbpl_dir_tmp/sbpl.sh" "$sbpl"    
+    mv "$sbpl_dir_tmp/sbpl.sh" "$sbpl"
 
     return 0
 }
@@ -427,7 +427,7 @@ function init () {
     printf "%s\n" '#   sbpl_get '"'"'archive'"'"' '"'"'sbpl'"'"' '"'"'master'"'"' '"'"'https://github.com/octocraft/${name}/archive/${version}.zip'"'"'                '"'"'./${name}-${version}/bin/'"'" >> $sbpl_pkg
     printf "%s\n" '#   sbpl_get '"'"'file'"'"'    '"'"'sbpl'"'"' '"'"'master'"'"' '"'"'https://raw.githubusercontent.com/octocraft/${name}/${version}/${name}.sh'"'" >> $sbpl_pkg
     printf "%s\n" '#   sbpl_get '"'"'git'"'"'     '"'"'sbpl'"'"' '"'"'master'"'"' '"'"'https://github.com/octocraft/${name}.git'"'"'                                   '"'"'./bin/'"'" >> $sbpl_pkg
-    printf "\n\n" >> $sbpl_pkg 
+    printf "\n\n" >> $sbpl_pkg
 
     chmod u+x $sbpl_pkg
 
@@ -456,14 +456,14 @@ function envvars () {
         export var_filter="*"
     fi
 
-    print_var "sbpl_os" 
-    print_var "_sbpl_os" 
-    print_var "sbpl_arch" 
-    print_var "_sbpl_arch" 
+    print_var "sbpl_os"
+    print_var "_sbpl_os"
+    print_var "sbpl_arch"
+    print_var "_sbpl_arch"
     print_var "sbpl_version"
- 
+
     print_var "sbpl_dir_pkgs"
-    print_var "sbpl_dir_bins" 
+    print_var "sbpl_dir_bins"
     print_var "sbpl_dir_tmps"
 
     print_var "sbpl_dir_pkg"

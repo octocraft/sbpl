@@ -14,9 +14,9 @@ export -f curl
 
     rm -rf vendor
     rm -f sbpl-pkg.sh.lock*
-    
+
     run ./sbpl.sh
-    [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]    
+    [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 }
 
 @test "dont download pkg" {

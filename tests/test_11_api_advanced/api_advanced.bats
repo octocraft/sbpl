@@ -13,7 +13,7 @@ function teardown () {
     rm -rf vendor
     rm -f sbpl-pkg.sh.lock*
 }
-    
+
 @test "set sbpl_os/sbpl_arch - mixed" {
 
     target="test-0.0.0"

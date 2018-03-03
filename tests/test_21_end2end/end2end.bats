@@ -5,8 +5,8 @@ eval "$(./sbpl.sh envvars)"
 @test "Get package: foo-1.0.0" {
 
     rm -rf vendor
-    rm -f sbpl-pkg.sh.lock*   
- 
+    rm -f sbpl-pkg.sh.lock*
+
     # Get Package
     ./sbpl.sh
     [ "$?" -eq 0 ]
@@ -24,9 +24,9 @@ eval "$(./sbpl.sh envvars)"
     rm -f sbpl-pkg.sh.lock*
 
     # Register foo
-    function foo () { 
+    function foo () {
         echo "hello world"
-    }    
+    }
 
     export -f foo
 

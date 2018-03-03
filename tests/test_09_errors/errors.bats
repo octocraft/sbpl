@@ -19,7 +19,7 @@ function sbpl-pkg () {
 }
 
 @test "error curl" {
-    
+
     sbpl-pkg "file"
 
     function curl () {
