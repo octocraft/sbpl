@@ -315,10 +315,15 @@ function sbpl_get () {
                 done
             fi
 
-            # Update current links
-            ln -fs "$sbpl_os/$sbpl_arch" "$sbpl_dir_pkgs/current"
-            ln -fs "$sbpl_os/$sbpl_arch" "$sbpl_dir_bins/current"
-            ln -fs "$pkg"      "$sbpl_dir_pkg/$name"
+            # Create current links
+            current="$_sbpl_os/$_sbpl_arch"
+            mkdir -p "$sbpl_dir_pkgs/$current"
+            mkdir -p "$sbpl_dir_bins/$current"
+            ln -fs "$current" "$sbpl_dir_pkgs/current"
+            ln -fs "$current" "$sbpl_dir_bins/current"
+
+            # Create Package link
+            ln -fs "$pkg" "$sbpl_dir_pkg/$name"
 
         else
             rm -rf $pkg_dir

@@ -1,5 +1,8 @@
 #!/usr/bin/env bats
 
+current_os="$(./sbpl.sh envvars _sbpl_os)"
+current_arch="$(./sbpl.sh envvars _sbpl_arch)"
+
 function curl () {
     export TEST_PACKGE="package/test"
     ./sbpl_mock_curl.bash $@
@@ -15,10 +18,8 @@ function test_sbpl_mock_curl () {
     [ "$status" -eq 0 ]
 
     [ -d "vendor/$sbpl_os/$sbpl_arch/$target" ]
-    [ -d "vendor/current/$target" ]
-
+    [ "$(readlink "vendor/current")" = "$current_os/$current_arch" ]
     [ -f "vendor/bin/$sbpl_os/$sbpl_arch/test" ]
-    [ -f "vendor/bin/current/test" ]
 }
 
 function setup () {
