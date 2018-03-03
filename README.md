@@ -19,7 +19,7 @@ chmod u+x sbpl.sh
 
 Though `sbpl` was developed with as little dependencies as possible, they cant be avoided. `sbpl` requires 
 - `curl` or `wget` 
-- `un*` to extract archives (it falls back to [archiver][https://github.com/mholt/archiver] which is downloaded during runtime)
+- `un*` to extract archives (it falls back to [archiver](https://github.com/mholt/archiver) which is downloaded during runtime)
 - `git` to checkout repos
 
 Install common dependencies
