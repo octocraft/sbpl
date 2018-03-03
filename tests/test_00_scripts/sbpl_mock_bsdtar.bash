@@ -1,1 +1,0 @@
-../scripts/sbpl_mock_bsdtar.bash

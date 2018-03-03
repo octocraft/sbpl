@@ -8,7 +8,7 @@ export sbpl_os="linux"
 export sbpl_arch="amd64"
 
 function sbpl-pkg () {
-    printf "#!/bin/bash\n\nsbpl_get '$1' 0 0 0 0" > sbpl-pkg.sh
+    printf "#!/bin/bash\n\nsbpl_get '$1' 0 0 $2 0" > sbpl-pkg.sh
     chmod u+x sbpl-pkg.sh
 }
 
@@ -24,7 +24,7 @@ function teardown () {
 
 @test "no curl and no wget" {
 
-    sbpl-pkg "file"
+    sbpl-pkg "file" "file"
 
     run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
@@ -33,35 +33,55 @@ function teardown () {
     [ "${lines[0]}" = "Neither 'curl' nor 'wget' found" ]
 }
 
-@test "no bsdtar (curl)" {
+@test "no zip (curl)" {
 
-    sbpl-pkg "archive"
+    function curl () {
+        # do not fall back
+        if [ "${4##*/}" = "archiver" ]; then exit 2; fi
 
-    ln -s $(command -v curl) dependencies/curl    
+        export TEST_PACKGE="package/test"
+        ./sbpl_mock_curl.bash $@
+    }
+
+    export -f curl
+    sbpl-pkg "archive" "archive.zip"
 
     run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 2 ]
-    [ "${lines[0]}" = "Dependency 'bsdtar' not found" ]
+    [ "${lines[0]}" = "Get package: linux/amd64/0-0" ]
+    [ "${lines[1]}" = "No suitable tool to extract archive found" ]
+    [ "${lines[2]}" = "Error while extracting 'vendor/tmp/linux/amd64/0-0.zip'" ]
+    [ "${lines[3]}" = "'sbpl-pkg.sh' failed with status 2" ]
 }
 
-@test "no bsdtar (wget)" {
+@test "no zip (wget)" {
 
-    sbpl-pkg "archive"
+    function wget () {
+        # do not fall back
+        if [ "${3##*/}" = "archiver" ]; then return 2; fi
 
-    ln -s $(command -v wget) dependencies/curl
+        export TEST_PACKGE="package/test"
+        ./sbpl_mock_curl.bash -fsSL "$4" -o "$3"
+    }
+
+    export -f wget
+    sbpl-pkg "archive" "archive.zip"
 
     run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 2 ]
-    [ "${lines[0]}" = "Dependency 'bsdtar' not found" ]
+    [ "${lines[0]}" = "Get package: linux/amd64/0-0" ]
+    [ "${lines[1]}" = "No suitable tool to extract archive found" ]
+    [ "${lines[2]}" = "Error while extracting 'vendor/tmp/linux/amd64/0-0.zip'" ]
+    [ "${lines[3]}" = "'sbpl-pkg.sh' failed with status 2" ]
 }
 
 @test "no git" {
 
-    sbpl-pkg "git"
+    sbpl-pkg "git" "repo"
 
     ln -s $(command -v bsdtar) dependencies/bsdtar
     ln -s $(command -v curl) dependencies/curl
@@ -72,3 +92,4 @@ function teardown () {
     [ "$status" -eq 2 ]
     [ "${lines[0]}" = "Dependency 'git' not found" ]
 }
+

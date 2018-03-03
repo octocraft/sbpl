@@ -6,16 +6,17 @@ function curl () {
 }
 
 function test_sbpl_mock_curl () {
-    export TEST_EXPECTED_URL="test-0.0.0"
+    target="test-0.0.0"
+    export TEST_EXPECTED_URL="$target.tar"
     export -f curl
     run ./sbpl.sh $@
     echo "status: $status" 1>&2
     echo "output: $output" 1>&2
     [ "$status" -eq 0 ]
 
-    [ -d "vendor/$sbpl_os/$sbpl_arch/$TEST_EXPECTED_URL" ]
-    [ -d "vendor/current/$TEST_EXPECTED_URL" ]
-    
+    [ -d "vendor/$sbpl_os/$sbpl_arch/$target" ]
+    [ -d "vendor/current/$target" ]
+
     [ -f "vendor/bin/$sbpl_os/$sbpl_arch/test" ]
     [ -f "vendor/bin/current/test" ]
 }
@@ -54,11 +55,12 @@ function teardown () {
 
     export sbpl_os=linux
     export sbpl_arch=arm
-    test_sbpl_mock_curl "update"    
+    test_sbpl_mock_curl "update"
 }
 
 @test "sbpl get" {
     export sbpl_os=linux
     export sbpl_arch=arm
-    test_sbpl_mock_curl "get" "archive" "test" "0.0.0" "test-0.0.0" 
+    test_sbpl_mock_curl "get" "archive" "test" "0.0.0" "test-0.0.0.tar"
 }
+

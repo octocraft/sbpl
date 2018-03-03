@@ -4,8 +4,8 @@ function curl () {
     ./sbpl_mock_curl.bash $@
 }
 
-function bsdtar () {
-    ./sbpl_mock_bsdtar.bash $@
+function tar () {
+    ./sbpl_mock_tar.bash $@
 }
 
 function mock_path () {
@@ -17,7 +17,7 @@ function mock_path () {
     unset TEST_PACKGE
     unset TEST_EXPECTED_URL
 
-    target="test.zip"
+    target="test.tar"
     rm -f $target
 
     # Check if zip is created
@@ -25,29 +25,29 @@ function mock_path () {
     [ "$status" -eq 0 ]
     [ -f "$target" ]
     rm -f $target
-    
+
     # Check if fails if url doesnt match
     export TEST_EXPECTED_URL="test-url"
     run curl 0 "wrong-url" 0 "$target"
     [ "$status" -eq 1 ]
     ! [ -f "$target" ]
-    
+
     # Check if zip is created with correct url
     export TEST_EXPECTED_URL="test-url"
     run curl 0 "test-url" 0 "$target"
     [ "$status" -eq 0 ]
     [ -f "$target" ]
-    rm -f $target    
+    rm -f $target
 
     # Check if zip is created from folder
     export TEST_PACKGE="package/test"
     run curl 0 "test-url" 0 "$target"
     [ -f "$target" ]
 
-    # Extract arhive
+    # Extract archive
     rm -rf vendor
     mkdir -p vendor/test
-    command -p bsdtar -xf "$target" -C "vendor/test"
+    command -p tar -xf "$target" -C "vendor/test"
 
     # run test script
     run ./vendor/test/test
@@ -58,33 +58,33 @@ function mock_path () {
     rm -rf vendor
 }
 
-@test "sbpl_mock_bsdtar.bash" {
+@test "sbpl_mock_tar.bash" {
 
     name="foo"
     pkg="$name-0.0.0-andorid-arm"
-    src="./$pkg.zip"
-    base="bsdtartest"
+    src="./$pkg.tar"
+    base="tartest"
     dst="$base/$pkg"
 
     unset TEST_PKG_BIN_DIR
     rm -rf $base
     mkdir -p "$dst"
 
-    # Check if list of files is correct    
-    run bsdtar tv "$src" -C "$dst" 
+    # Check if list of files is correct
+    run tar tv "$src" -C "$dst"
     [ "$status" -eq 0 ]
     echo "--- $output" 1>&2
-    [ "$output" = "./foo" ] 
-    ! [ -d "$dst" ] 
+    [ "$output" = "./foo" ]
+    ! [ -d "$dst" ]
 
     # Check if file is extracted
-    run bsdtar xvf "$src" -C "$dst"    
+    run tar xvf "$src" -C "$dst"
     echo "--- $output" 1>&2
     [ "$status" -eq 0 ]
     [ "$output" = "x ./foo" ]
     [ -d "$dst" ]
     [ -f "$dst/$name" ]
-    
+
     # Check file
     run $dst/$name
     [ "$status" -eq 0 ]
@@ -92,10 +92,10 @@ function mock_path () {
 
     # Check with different bin dir
     export TEST_PKG_BIN_DIR="./bin/"
-       
+
     rm -rf $base
     mkdir -p "$dst"
-    run bsdtar xvf "$src" -C "$dst"
+    run tar xvf "$src" -C "$dst"
 
     # Check file
     run "$dst/bin/$name"
@@ -103,7 +103,7 @@ function mock_path () {
     [ "$output" = "test" ]
 
     # Clean up
-    rm -rf "bsdtartest"
+    rm -rf "$base"
 }
 
 @test "sbpl_mock_path.bash" {
@@ -111,7 +111,7 @@ function mock_path () {
     # Create script which can be called
     printf "#!/bin/bash\n%s\n" 'echo "$PATH - $1"; exit $2' > "testpath.sh"
     chmod u+x "testpath.sh"
-    
+
     # run script with different path
     run mock_path "/bin" "./testpath.sh" "hello" 0
     [ "$status" -eq 0 ]
@@ -124,3 +124,4 @@ function mock_path () {
     # Clean up
     rm -f "testpath.sh"
 }
+

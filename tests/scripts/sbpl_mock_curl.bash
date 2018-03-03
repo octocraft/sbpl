@@ -11,11 +11,11 @@ if ! [ -z ${TEST_EXPECTED_URL+x} ]; then
 fi
 
 if ! [ -z ${TEST_PACKGE+x} ]; then
-    # Create zip from folder
-    command -p bsdtar -C "$TEST_PACKGE" -cf "$dest" '.'   
+    # Create tar from folder
+    command -p tar -C "$TEST_PACKGE" -cf "$dest" '.'
 else
-    # Empty zip archive
-    echo -e "\x50\x4B\x05\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" > $dest
+    # Empty tar
+    command -p tar cvf "$dest" --files-from /dev/null
 fi
 
 exit 0

@@ -80,7 +80,7 @@ function sbpl_env () {
 function sbpl_get () {
 
     function has_command () {
-        command -v "$1" &> /dev/null
+        command -v "$1" > /dev/null
     }
 
     function check_dependency () {
@@ -90,82 +90,99 @@ function sbpl_get () {
         fi
     }
 
+    function display_progress () {
+
+        max=72
+        total=$(if [ "$1" -le 0 ]; then echo 1; else echo "$1"; fi)
+        current=0
+           
+        # get local dependet deciaml separator
+        num=$(printf "%.1f")
+        dcs=${num:1:1}
+
+        while read line; do
+        
+            current=$((current + 1))
+            steps=$((current * max / total))
+            (("$steps" > $max)) && steps=$max
+            left=$((max - steps))
+            percent=$((steps * 100 / max))
+            promille=$(($((steps * 1000 / max)) % 10))
+    
+            # dots
+            printf -v f '%*s' $steps ''
+            printf '%s' ${f// /.}
+            
+            # spaces
+            printf '%*s' $left ''        
+    
+            # percent
+            printf " %3d$dcs%1d%%\r" $percent $promille 
+        done
+    
+        printf "\n"
+    }
+    
     function unpack () {
         src="$1"
         dst="$2"
-        src="$([ "$src" != "${src#/}" ] && echo "$src" || echo "$PWD/$src")"
+        n="$([ "$src" != "${src#/}" ] && echo "$src" || echo "$PWD/$src")"
 
-        if [ ! -f "$src" ] ; then
-            printf "%s\bn" "file '$src' does not exist" 1>&2
-            return 1
-        fi
+        mkdir -p "$dst"
 
         # Try to unpack
         pushd "$dst" > /dev/null
-            function extract () {
-            # https://github.com/xvoland/Extract/blob/v0.7/extract.sh
-
-                function run () {
-                    cmd=$1; shift
-                    if ! command -v "$cmd" > /dev/null; then exit 127; fi
-                    $cmd $@
-                }
-
-                case "${src}" in
-                    *.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar)
-                                run tar xvf "$src"     ;;
-                    *.lzma)     run unlzma "$src"      ;;
-                    *.bz2)      run bunzip2 "$src"     ;;
-                    *.rar)      run unrar x -ad "$sc"  ;;
-                    *.gz)       run gunzip "$src"      ;;
-                    *.zip)      run unzip "$src"       ;;
-                    *.z)        run uncompress "$src"  ;;
-                    *.7z|*.arj|*.cab|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.rpm|*.udf|*.wim|*.xar)
-                                run 7z x "$src"        ;;
-                    *.xz)       run unxz "$src"        ;;
-                    *.exe)      run cabextract "$src"  ;;
-                    *)          return 127             ;;
-                esac
+            funcion extract {
+                # https://github.com/xvoland/Extract/blob/v0.7/extract.sh
+                if [ -f "$n" ] ; then
+                    case "${n%,}" in
+                        *.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar) 
+                                    tar xvf "$n"       ;;
+                        *.lzma)     unlzma ./"$n"      ;;
+                        *.bz2)      bunzip2 ./"$n"     ;;
+                        *.rar)      unrar x -ad ./"$n" ;;
+                        *.gz)       gunzip ./"$n"      ;;
+                        *.zip)      unzip ./"$n"       ;;
+                        *.z)        uncompress ./"$n"  ;;
+                        *.7z|*.arj|*.cab|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.rpm|*.udf|*.wim|*.xar)
+                                    7z x ./"$n"        ;;
+                        *.xz)       unxz ./"$n"        ;;
+                        *.exe)      cabextract ./"$n"  ;;
+                        *)          echo "extract: '$n' - unknown archive method"
+                                    return 1
+                                    ;;
+                    esac
+                else
+                    echo "'$n' - file does not exist"
+                    return 1
+                fi
             }
-
+        
             set +e
             (extract "$src")
             result="$?"
             set -e
-        popd > /dev/null
 
-        if [ "$result" -eq 127 ]; then # command not found | unknown archive method
-
-            ul="https://github.com/mholt/archiver/releases/download/v2.0/archiver_${_sbpl_os}_${_sbpl_arch}"
-            pkg_dir="$sbpl_dir_pkgs/$_sbpl_os/$_sbpl_arch/archiver"
-            pkg_bin="$pkg_dir/archiver"
-            bin_dir="$sbpl_dir_bins/$_sbpl_os/$_sbpl_arch"
-
-            mkdir -p "$pkg_dir"
-            mkdir -p "$bin_dir"
-
-            set +e
-            (
-                set -e
-
-                if [ ! -f "$pkg_bin" ]; then
-                    fetch "$url" "$pkg_bin"
-                    chmod +x "$pkg_bin"
-                    ln -fs "$PWD/$pkg_bin" "$bin_dir/archiver"
+            if [ "$result" -ne 0 ]; then # done
+                if [ "$result" -eq 127 ]; then # command not found
+                 #   (
+                 #       sbpl_os="$_sbpl_os"
+                 #       sbpl_arch="$_sbpl_arch"
+                 #       sbpl_get "file" "archiver" "v2.0" 'https://github.com/mholt/archiver/releases/download/${version}/${name}_${sbpl_os}_${sbpl_arch}'
+                 #   )
+a=42
+                 #   set +e
+                 #   (./$sbpl_dir_pkgs/$_sbpl_os/$_sbpl_arch/archiver/archiver open $n $dst)
+                 #   result=$?
+                 #   set -e
                 fi
-                ./$pkg_bin open "$src" "$dst"
-            )
-            result="$?"
-            set -e
-        fi
-    
-        if [ "$result" -ne 0 ]; then
-            printf "No suitable tool to extract archive found\n" 1>&2
-        fi
+            fi
+        
+        pop > /dev/null
 
-        exit $result
+        return $result
     }
-
+    
     function sbpl_usage () {
 
         printf "Usage: sbpl_get 'target'\n" 1>&2
@@ -179,18 +196,9 @@ function sbpl_get () {
 
     # Check how we fetch data
     if has_command "curl"; then
-        function fetch () {
-            curl -fsSL "$1" -o "$2"
-        }
+        function fetch () { curl -fSL "$1" -o "$2"; }
     elif has_command "wget"; then
-        function fetch () {
-            set +e
-            _output=$(wget -nv -O "$2" "$1")
-            _result=$?
-            set -e
-            if [ $_result -ne 0 ]; then printf "%s\n" "$_output" 1>&2; fi
-            exit $_result
-        }
+        function fetch () { wget -O "$2" "$1"; }
     else
         printf "Neither 'curl' nor 'wget' found\n" 1>&2
         exit 2
@@ -203,7 +211,7 @@ function sbpl_get () {
     target="$1"
     case "$target" in
         file)                                           ;;
-        archive)                                        ;;
+        archive)    check_dependency bsdtar;            ;;
         git)        check_dependency git                ;;
         *)          printf "Unknown option $target\n" 1>&2
                     sbpl_usage; return 2;               ;;
@@ -238,15 +246,15 @@ function sbpl_get () {
 
         if [ "$target" = "file" ] || [ "$target" = "archive" ]; then
 
-            filename="${url##*/}"
-            extension="${filename##*.}"
-            extension="$([ -z "$extension" ] && echo "" || echo ".$extension")"
+            filename=${url##*/}
+            extension=${filename##*.}
+            extension=([ -z "$extension" ] && echo "" || echo ".$extension")
             tmpfile="$sbpl_dir_tmp/${pkg}$extension"
             mkdir -p "$sbpl_dir_tmp"
 
-            set +e
+            set +e 
             (fetch "$url" "$tmpfile")
-            result="$?"
+            result=$?
             set -e
             
             if [ "$result" -ne 0 ]; then
@@ -254,10 +262,12 @@ function sbpl_get () {
             else
             
                 if [ "$target" = "archive" ]; then
-
-                    set +e
-                    (unpack "$tmpfile" "$pkg_dir")
-                    result="$?"
+                
+                    numfiles=$(bsdtar tf $tmpfile | wc -l)
+               
+                    set +e 
+                    (bsdtar xvf "$tmpfile" -C "$pkg_dir" 2>&1 | display_progress $numfiles; return ${PIPESTATUS[0]})
+                    result=$?
                     set -e
 
                     if [ "$result" -ne 0 ]; then
@@ -270,7 +280,7 @@ function sbpl_get () {
                 fi
             fi
         elif [ "$target" = "git" ]; then
-
+       
             set +e
             (git clone "$url" "$pkg_dir")
             result=$?
@@ -286,7 +296,7 @@ function sbpl_get () {
                     result=$?
                     set -e
                 popd  > /dev/null
-
+    
                 if [ "$result" -ne 0 ]; then
                     printf "Error while checking out branch/tag '%s'\n" "$version" 1>&2
                 fi

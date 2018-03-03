@@ -9,7 +9,7 @@ export -f curl
 
 function sbpl-pkg () {
     printf "%s\n%s\n\n" "#!/bin/bash" "set -eu" > sbpl-pkg.sh
-    printf "%s\n" "sbpl_get 'archive' 'bin-test' 'version' 'url' '$1'" >> sbpl-pkg.sh
+    printf "%s\n" "sbpl_get 'archive' 'bin-test' 'version' 'url.tar' '$1'" >> sbpl-pkg.sh
     chmod u+x sbpl-pkg.sh
 }
 
