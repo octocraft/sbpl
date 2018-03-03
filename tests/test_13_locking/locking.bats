@@ -12,7 +12,7 @@ export -f curl
 
 function sbpl-pkg () {
     printf "%s\n%s\n\n" "#!/bin/bash" "set -eu" > sbpl-pkg.sh
-    printf "%s\n" "sbpl_get 'archive' 'test' '0.0.0' '${name}-${version}'" >> sbpl-pkg.sh
+    printf "%s\n" "sbpl_get 'archive' 'test' '0.0.0' 'test-0.0.0.tar'" >> sbpl-pkg.sh
     chmod u+x sbpl-pkg.sh
 } 
 
@@ -21,28 +21,28 @@ function sbpl-pkg () {
     # clean
     rm -rf vendor
     rm -f sbpl-pkg.sh*
-    
+
     # get pkg
     sbpl-pkg
     run ./sbpl.sh
     
     # check pkg
-    [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]    
+    [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 
     # Check lock file
     [ -f "sbpl-pkg.sh.lock-linux-amd64" ]
 }
 
 @test "dont download pkg" {
-    
-    # remove file from pkg
+
+    # remove pkg
     rm -r "vendor/$sbpl_os/$sbpl_arch/test-0.0.0"
 
     # re-run sbpl
     run ./sbpl.sh
 
     # check if file is still missing (no re-donwload)
-    ! [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
+    [ ! -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 }
 
 @test "dont download pkg (pkg new timestamp)" {
@@ -52,9 +52,10 @@ function sbpl-pkg () {
 
     # re-run sbpl
     run ./sbpl.sh
-    
+    echo "output: $output" 1>&2
+
     # check if file is still missing (no re-donwload)
-    ! [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
+    [ ! -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 }
 
 @test "download pkg (new pkg content)" {
@@ -64,9 +65,10 @@ function sbpl-pkg () {
 
     # re-run sbpl
     run ./sbpl.sh
+    echo "output: $output" 1>&2
 
     # check pkg
-    [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]    
+    [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 }
 
 @test "download pkg (new sbpl_os/sbpl_arch)" {

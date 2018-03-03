@@ -12,10 +12,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Make packages and binaries accessible via current dir
 - use wget or curl (whatever is available)
 - vars to indicate actual OS/ARCH
+- fall back to archiver if un* is unavailbe
 ### Changed
 - bin dir include and filter
 - fix empty bin dir variable
 - rename OS/ARCH to sbpl_os/sbpl_arch
+- use un* to extract archives
 
 ## [0.3.0] - 2018-02-26
 ### Added

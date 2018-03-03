@@ -17,12 +17,15 @@ chmod u+x sbpl.sh
 ```
 ### Dependencies
 
-Though `sbpl` was developed with as little dependencies as possible, they cant be avoided. `sbpl` requires `curl` or `wget` to be available. Furthermore `bsdtar` if you want to download archives and `git` if you want to check out repos.
+Though `sbpl` was developed with as little dependencies as possible, they cant be avoided. `sbpl` requires 
+- `curl` or `wget` 
+- `un*` to extract archives (it falls back to [archiver][https://github.com/mholt/archiver] which is downloaded during runtime)
+- `git` to checkout repos
 
-Install all dependencies
+Install common dependencies
 
 ```BASH
-sudo apt-get update && sudo apt-get install -y curl bsdtar git
+sudo apt-get update && sudo apt-get install -y curl tar unzip git
 ```
 
 ## Usage

@@ -16,14 +16,15 @@ function teardown () {
     
 @test "set sbpl_os/sbpl_arch - mixed" {
 
-    export TEST_EXPECTED_URL="test-0.0.0"
+    target="test-0.0.0"
+    export TEST_EXPECTED_URL="$target.tar"
     export -f curl
     run ./sbpl.sh $@
     echo "status: $status" 1>&2
     echo "output: $output" 1>&2
     [ "$status" -eq 0 ]
-    [ -d "vendor/windows/386/$TEST_EXPECTED_URL" ]
-    [ -d "vendor/linux/amd64/$TEST_EXPECTED_URL" ]
+    [ -d "vendor/windows/386/$target" ]
+    [ -d "vendor/linux/amd64/$target" ]
 
 }
 

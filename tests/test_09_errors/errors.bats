@@ -14,7 +14,7 @@ function teardown () {
 }
 
 function sbpl-pkg () {
-    printf "#!/bin/bash\n\nsbpl_get '$1' 'test' '0.0.0' 'test-0.0.0' './'" > sbpl-pkg.sh
+    printf "#!/bin/bash\n\nsbpl_get '$1' 'test' '0.0.0' 'test-0.0.0$2' './'" > sbpl-pkg.sh
     chmod u+x sbpl-pkg.sh
 }
 
@@ -41,31 +41,31 @@ function sbpl-pkg () {
     unset curl
 }
 
-@test "error bsdtar" {
+@test "error archive" {
 
-    sbpl-pkg "archive"
+    sbpl-pkg "archive" ".tar"
 
     function curl () {
         export TEST_PACKGE="package/test"
         ./sbpl_mock_curl.bash $@
     }
 
-    function bsdtar () {
-        echo "BSDTAR-TEST-ERROR" 1>&2
+    function tar () {
+        echo "TAR-TEST-ERROR" 1>&2
         exit 43
     }
 
     export -f curl
-    export -f bsdtar
+    export -f tar
 
     run ./sbpl.sh
     echo "ouput: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 43 ]
     [ "${lines[0]}" = "Get package: $sbpl_os/$sbpl_arch/test-0.0.0" ]
-    [ "${lines[1]}" = "BSDTAR-TEST-ERROR" ]
-    # ................................................ 100%
-    [ "${lines[3]}" = "Error while extracting 'vendor/tmp/linux/amd64/test-0.0.0'" ]
+    [ "${lines[1]}" = "TAR-TEST-ERROR" ]
+    [ "${lines[2]}" = "No suitable tool to extract archive found" ]
+    [ "${lines[3]}" = "Error while extracting 'vendor/tmp/linux/amd64/test-0.0.0.tar'" ]
     [ "${lines[4]}" = "'sbpl-pkg.sh' failed with status 43" ]
 }
 
@@ -115,3 +115,4 @@ function sbpl-pkg () {
     [ "${lines[2]}" = "Error while checking out branch/tag '0.0.0'" ]
     [ "${lines[3]}" = "'sbpl-pkg.sh' failed with status 45" ]
 }
+

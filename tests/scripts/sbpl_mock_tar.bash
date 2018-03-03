@@ -13,8 +13,12 @@ binpath=${TEST_PKG_BIN_DIR}$name
 
 if [ "$opts1" = "xvf" ]; then
 
-    opts2=$3
-    dst=$4
+    if [ "$#" -ge 4 ]; then
+        dst=$4
+    else
+        dst="."
+    fi
+
     target=$dst/$binpath        
 
     mkdir -p $dst/$TEST_PKG_BIN_DIR
