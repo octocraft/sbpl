@@ -28,7 +28,7 @@ export sbpl_arch="amd64"
 @test "file" {
 
     sbpl-pkg "file/foo"
-    
+
     run ./sbpl.sh $@
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
@@ -60,7 +60,7 @@ export sbpl_arch="amd64"
 }
 
 @test "filter include" {
-    
+
     sbpl-pkg "mixed/*.sh"
 
     run ./sbpl.sh $@
@@ -90,7 +90,7 @@ export sbpl_arch="amd64"
 }
 
 @test "empty" {
-    
+
     sbpl-pkg ""
 
     run ./sbpl.sh $@

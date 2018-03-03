@@ -16,13 +16,13 @@ export LC_NUMERIC="en_US.UTF-8"
     # Get Package
     run ./sbpl.sh
     [ "$status" -eq 0 ]
- 
+
     # Check data
     [ -f "vendor/$sbpl_os/$sbpl_arch/$target/$target/bin/sbpl" ]
     [ -f "vendor/bin/$sbpl_os/$sbpl_arch/sbpl" ]
     run ./vendor/bin/$sbpl_os/$sbpl_arch/sbpl version
     [ "$status" -eq 0 ]
-    
+
     # Do not re-download package
     run ./sbpl.sh
     [ "$status" -eq 0 ]
@@ -30,7 +30,7 @@ export LC_NUMERIC="en_US.UTF-8"
 
     rm -rf vendor
     rm -f sbpl-pkg.sh.lock*
-    
+
     popd > /dev/null
 }
 

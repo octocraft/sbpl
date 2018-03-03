@@ -38,7 +38,7 @@ function teardown () {
 }
 
 @test "set sbpl_os/sbpl_arch - linux/x86" {
- 
+
     export sbpl_os=linux
     export sbpl_arch=x86
     test_sbpl_mock_curl

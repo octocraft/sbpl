@@ -11,7 +11,7 @@
 
     # Check if file exists and is executable
     [ -x "sbpl-pkg.sh" ]
-        
+
     # Check if output matches template
     diff "sbpl-pkg.sh" "sbpl-pkg.sh.base"
 

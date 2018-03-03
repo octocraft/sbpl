@@ -14,7 +14,7 @@ function sbpl-pkg () {
     printf "%s\n%s\n\n" "#!/bin/bash" "set -eu" > sbpl-pkg.sh
     printf "%s\n" "sbpl_get 'archive' 'test' '0.0.0' 'test-0.0.0.tar'" >> sbpl-pkg.sh
     chmod u+x sbpl-pkg.sh
-} 
+}
 
 @test "download pkg" {
 
@@ -25,7 +25,7 @@ function sbpl-pkg () {
     # get pkg
     sbpl-pkg
     run ./sbpl.sh
-    
+
     # check pkg
     [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 
@@ -46,7 +46,7 @@ function sbpl-pkg () {
 }
 
 @test "dont download pkg (pkg new timestamp)" {
-    
+
     # re-create pkg file
     sbpl-pkg
 
@@ -75,10 +75,10 @@ function sbpl-pkg () {
 
     export sbpl_os="windows"
     export sbpl_arch="386"
- 
+
     # re-run sbpl
     run ./sbpl.sh
-    
+
     # check pkg
     [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 
