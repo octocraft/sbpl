@@ -61,6 +61,6 @@ function teardown () {
 @test "sbpl get" {
     export sbpl_os=linux
     export sbpl_arch=arm
-    test_sbpl_mock_curl "get" "archive" "test" "0.0.0" "test-0.0.0.tar"
+    test_sbpl_mock_curl "get" "archive" "test" "0.0.0" "test-0.0.0.tar" "./"
 }
 
