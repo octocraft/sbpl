@@ -70,6 +70,8 @@ You find a full example in [examples/blank](examples/blank).
 
 The packages are stored in `vendor/$sbpl_os/$sbpl_arch/${name}-${version}`. A link is created in `vendor/current`.
 
+Note: If the archive contains a root folder `${name}-${version}` the content of this folder is used.
+
 ## Commands
 
 `help` - Prints usage information and a list of commands which may be used

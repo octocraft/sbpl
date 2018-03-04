@@ -18,7 +18,7 @@ export LC_NUMERIC="en_US.UTF-8"
     [ "$status" -eq 0 ]
 
     # Check data
-    [ -f "vendor/$sbpl_os/$sbpl_arch/$target/$target/bin/sbpl" ]
+    [ -f "vendor/$sbpl_os/$sbpl_arch/$target/bin/sbpl" ]
     [ -f "vendor/bin/$sbpl_os/$sbpl_arch/sbpl" ]
     run ./vendor/bin/$sbpl_os/$sbpl_arch/sbpl version
     [ "$status" -eq 0 ]

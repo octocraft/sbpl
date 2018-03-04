@@ -254,6 +254,17 @@ function sbpl_get () {
                     if [ "$result" -ne 0 ]; then
                         printf "Error while extracting '%s'\n" "$tmpfile" 1>&2
                     fi
+
+                    # If packeg is in dir "name-version", remove it
+                    pkg_dir_sub=$pkg_dir/$pkg
+                    if [ -d "$pkg_dir_sub" ] && [ "$(echo $pkg_dir/*/)" = "$pkg_dir_sub/" ]; then
+                        printf "move %s -> %s\n" "$pkg_dir_sub" "$pkg_dir"
+                        tmpdir=$sbpl_dir_tmp/$pkg
+                        rm -rf $tmpdir
+                        mv $pkg_dir_sub $tmpdir
+                        mv $tmpdir $sbpl_dir_pkg
+                    fi
+
                 else
                     mkdir -p "$pkg_path"
                     chmod +x "$tmpfile"
@@ -371,8 +382,8 @@ function get_packages () {
 function sbpl_test () {
  
     if ! (command -v bats &> /dev/null); then
-        sbpl_get 'archive' 'bats' '0.4.0' 'https://github.com/sstephenson/bats/archive/v${version}.zip' './${name}-${version}/bin'
-        bats_bin=$(pwd)/vendor/current/bats-0.4.0/bats-0.4.0/bin/bats
+        sbpl_get 'archive' 'bats' '0.4.0' 'https://github.com/sstephenson/bats/archive/v${version}.zip' 'bin'
+        bats_bin=$(pwd)/vendor/current/bats/bin/bats
         bats () { $bats_bin $@; }
     fi
 
@@ -433,7 +444,7 @@ function upgrade () {
     # Update Locations
     sbpl_env
 
-    sbpl_get 'file' 'sbpl' 'master' 'https://raw.githubusercontent.com/octocraft/${name}/${version}/sbpl.sh'
+    sbpl_get 'file' 'sbpl' 'master' 'https://raw.githubusercontent.com/octocraft/${name}/${version}/sbpl.sh' './'
 
     mkdir -p "$sbpl_dir_tmp"
     cp "$sbpl_dir_bin/sbpl" "$sbpl_dir_tmp/sbpl.sh"
