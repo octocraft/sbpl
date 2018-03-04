@@ -1,14 +1,14 @@
 #!/usr/bin/env bats
 
+export SBPL_VER="$(cat ../data/sbpl_version)"
+
 @test "sbpl upgrade" {
 
     rm -rf vendor
 
-    # Get copy
-    cp -L sbpl.sh.base sbpl.sh
-
-    # Make copy unique
-    sed -i 's/sbpl_version="0.4.0"/sbpl_version="0.0.0-test"/g' sbpl.sh
+    # Get unique copy
+    cat sbpl.sh.base | sed -e "s/sbpl_version=\"$SBPL_VER\"/sbpl_version=\"0.0.0-test\"/g" > sbpl.sh
+    chmod +x sbpl.sh
     
     # Test version
     run ./sbpl.sh envvars sbpl_version
