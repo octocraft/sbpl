@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - test command for testing with bats
+- prevent double root dir
 ### Changed
 - Indicate progress while downloading
 - Lock current dirs to actual OS/ARCH
