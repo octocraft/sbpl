@@ -88,7 +88,15 @@ The packages are stored in `vendor/$sbpl_os/$sbpl_arch/${name}-${version}`. A li
 
 `get` - Download a package via shell. The syntax for this command is the same as sbpl_get
 
+`test` - Runs tests with [bats](https://github.com/sstephenson/bats)
+
 If called without further arguments `/sbpl.sh` will download packages if needed.
+
+### Testing
+
+To test your package call `./sbpl.sh test <dir>` this will scan the provided dir (defaults to current dir) for folder which names start with test (test*/). `.bats` test files in these folders are exectued.
+
+If `bats` is not present, sbpl will download it.
 
 ## API
 
@@ -157,11 +165,13 @@ Note: `url` and `bin-dir` are evaluated using eval. Use single quotes to access 
 
 ### [blank](examples/blank)
 
-Copy this example as boiler plate for your own setup. 
+Boiler plate for your own setup
 
 `run.sh` - The script which starts your application and makes all packages available to it
 
 ### [testing-with-bats](examples/testing-with-bats)
+
+Sample setup for testing with bats
 
 `foo` - The executable to test
 

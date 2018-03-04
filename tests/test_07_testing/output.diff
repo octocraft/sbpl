@@ -1,0 +1,12 @@
+[test1]
+test1
+--tap .
+
+[test2]
+test2
+--tap .
+
+[test3 3]
+test3 3
+--tap .
+

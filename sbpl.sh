@@ -368,6 +368,32 @@ function get_packages () {
     return 0
 }
 
+function sbpl_test () {
+ 
+    if ! (command -v bats &> /dev/null); then
+        sbpl_get 'archive' 'bats' '0.4.0' 'https://github.com/sstephenson/bats/archive/v${version}.zip' './${name}-${version}/bin'
+        bats_bin=$(pwd)/vendor/current/bats-0.4.0/bats-0.4.0/bin/bats
+        bats () { $bats_bin $@; }
+    fi
+
+    [ -z ${1+x} ] && testdir="." || testdir="$1"
+    pushd "$testdir" > /dev/null
+
+    # Loop through test folders
+    for subdir in test*/; do
+
+        printf "[${subdir%/}]\n"
+
+        pushd "./$subdir" > /dev/null
+            bats --tap .
+        popd > /dev/null
+
+        printf "\n"
+        done
+
+    popd > /dev/null
+}
+
 function show_version () {
 
     printf "$sbpl_name - $sbpl_version\n"
@@ -383,6 +409,7 @@ function usage () {
     printf "version - print sbpl version information\n"
     printf "envvars - print vars used by sbpl. Pass a var name to filter the list\n"
     printf "get     - download package\n"
+    printf "test    - run bats test in test folder\n"
 
     return 0
 }
@@ -504,6 +531,7 @@ if ! [ -z ${1+x} ]; then
         init*)      init $@;            result=$?; ;;
         envvars*)   envvars $@;         result=$?; ;;
         get*)       sbpl_get $@;        result=$?; ;;
+        test*)      sbpl_test $@;       result=$?; ;;
         *)   unknown_option $cmd $@;    result=$?; ;;
     esac;
 else
