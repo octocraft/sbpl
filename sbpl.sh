@@ -393,6 +393,8 @@ function sbpl_test () {
     # Loop through test folders
     for subdir in test*/; do
 
+        if [ ! -d "$subdir" ]; then continue; fi
+
         printf "[${subdir%/}]\n"
 
         pushd "./$subdir" > /dev/null
