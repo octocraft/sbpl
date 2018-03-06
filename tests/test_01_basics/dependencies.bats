@@ -12,6 +12,12 @@ function sbpl-pkg () {
     chmod u+x sbpl-pkg.sh
 }
 
+function archiver () {
+    exit 2
+}
+
+export -f archiver
+
 function setup () {
     mkdir -p dependencies
 }
@@ -36,32 +42,27 @@ function teardown () {
 @test "no zip (curl)" {
 
     function curl () {
-        # do not fall back
-        if [ "${4##*/}" = "archiver" ]; then exit 2; fi
-
         export TEST_PACKGE="package/test"
         ./sbpl_mock_curl.bash $@
     }
 
     export -f curl
+
     sbpl-pkg "archive" "archive.zip"
 
     run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
-    [ "$status" -eq 2 ]
+    [ "$status" -eq 127 ]
     [ "${lines[0]}" = "Get package: linux/amd64/0-0" ]
     [ "${lines[1]}" = "No suitable tool to extract archive found" ]
     [ "${lines[2]}" = "Error while extracting 'vendor/tmp/linux/amd64/0-0.zip'" ]
-    [ "${lines[3]}" = "'sbpl-pkg.sh' failed with status 2" ]
+    [ "${lines[3]}" = "'sbpl-pkg.sh' failed with status 127" ]
 }
 
 @test "no zip (wget)" {
 
     function wget () {
-        # do not fall back
-        if [ "${3##*/}" = "archiver" ]; then exit 2; fi
-
         export TEST_PACKGE="package/test"
         ./sbpl_mock_curl.bash -fsSL "$4" -o "$3"
     }
@@ -72,11 +73,11 @@ function teardown () {
     run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
-    [ "$status" -eq 2 ]
+    [ "$status" -eq 127 ]
     [ "${lines[0]}" = "Get package: linux/amd64/0-0" ]
     [ "${lines[1]}" = "No suitable tool to extract archive found" ]
     [ "${lines[2]}" = "Error while extracting 'vendor/tmp/linux/amd64/0-0.zip'" ]
-    [ "${lines[3]}" = "'sbpl-pkg.sh' failed with status 2" ]
+    [ "${lines[3]}" = "'sbpl-pkg.sh' failed with status 127" ]
 }
 
 @test "no git" {
@@ -89,7 +90,7 @@ function teardown () {
     run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
-    [ "$status" -eq 2 ]
+    [ "$status" -eq 127 ]
     [ "${lines[0]}" = "Dependency 'git' not found" ]
 }
 

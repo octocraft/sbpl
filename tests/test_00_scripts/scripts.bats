@@ -12,6 +12,18 @@ function mock_path () {
     ./sbpl_mock_path.bash $@
 }
 
+@test "tar" {
+
+    echo "'tar' not found" 1>&2
+    command -v tar &> /dev/null
+}
+
+@test "curl" {
+
+    echo "'curl' not found" 1>&2
+    command -v curl &> /dev/null
+}
+
 @test "sbpl_mock_curl.bash" {
 
     unset TEST_PACKGE
