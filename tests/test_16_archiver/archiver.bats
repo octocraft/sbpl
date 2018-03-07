@@ -8,9 +8,11 @@ export sbpl_os="windows"
 export sbpl_arch="386"
 
 function sbpl-pkg () {
-    printf "#!/bin/bash\n\nsbpl_get '$1' 0 0 $2 0" > sbpl-pkg.sh
+    printf "#!/bin/bash\n\nsbpl_get archive name version archive.$1 0" > sbpl-pkg.sh
     chmod u+x sbpl-pkg.sh
 }
+
+target="vendor/$sbpl_os/$sbpl_arch/name-version"
 
 function teardown () {
     rm -rf vendor
@@ -18,20 +20,20 @@ function teardown () {
     rm -f sbpl-pkg.sh*
 }
 
-@test "archiver" {
+function curl () {
+    if [ "${2%.*}" = "archive" ]; then
+        export TEST_PACKGE="package/link"
+        ./sbpl_mock_curl.bash $@
+    else
+        command -p curl $@
+    fi
+}
 
-    function curl () {
-        if [ "$2" = "archive.tar" ]; then
-            export TEST_PACKGE="package/test"
-            ./sbpl_mock_curl.bash $@
-        else
-            command -p curl $@
-        fi
-    }
+export -f curl
 
-    export -f curl
+@test "archiver tar" {
 
-    sbpl-pkg "archive" "archive.tar"
+    sbpl-pkg "tar"
 
     mkdir -p dependencies
     ln -s /bin/* dependencies
@@ -42,6 +44,8 @@ function teardown () {
     echo "status: $status" 1>&2
     [ "$status" -eq 0 ]
 
-    [ -f "vendor/windows/386/0-0/test" ]
+    [ "$(./$target/foo.sh bar)" = "bar" ]
+    [ "$(./$target/bin/foo bar)" = "bar" ]
+
 }
 

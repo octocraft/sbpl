@@ -139,12 +139,12 @@ function sbpl_get () {
             bin_name=''
 
             case "$src" in
-                *.zip)  ;; # currently there is a bug in archiver, that symlinks are not created correctly.
-                *.tar|*.tar.gz|*.tgz|*.tar.bz2|*.tbz2|*.tar.xz|*.txz|*.tar.lz4|*.tlz4|*.tar.sz|*.tsz|*.rar)
+                *.zip|*.tar|*.tar.gz|*.tgz|*.tar.bz2|*.tbz2|*.tar.xz|*.txz|*.tar.lz4|*.tlz4|*.tar.sz|*.tsz|*.rar)
                         bin_name='archiver'
-                        bin_ver='2.0'
-                        [ "$_sbpl_os" = "darwin" ] && bin_os="mac" || bin_os="$_sbpl_os"
-                        bin_url="https://github.com/mholt/$bin_name/releases/download/v$bin_ver/${bin_name}_${bin_os}_${_sbpl_arch}"
+                        bin_ver='2.0.1'
+                        # currently there is a bug in archiver, that symlinks are not created correctly.
+                        # bin_url="https://github.com/mholt/$bin_name/releases/download/v$bin_ver/${bin_name}_${bin_os}_${_sbpl_arch}"
+                        bin_url='https://github.com/peterpostmann/${name}/releases/download/v${version}/${name}_${sbpl_os}_${sbpl_arch}'
                         bin_bin='./'
                         ;;
                 *)      ;;
@@ -165,7 +165,7 @@ function sbpl_get () {
 
                     archiver open "$src" "$dst"
                 )
-                result="$?"
+                [ "$?" -eq 0 ] && result=0
                 set -e
             fi
         fi
