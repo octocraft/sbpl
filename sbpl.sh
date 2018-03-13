@@ -393,14 +393,28 @@ function get_packages () {
 
 function sbpl_test () {
 
-    PATH="$PWD/$sbpl_dir_bins/current:$PATH"
+    [ -z ${1+x} ] && testdir="." || testdir="$1"
+    testdir="$([ "$testdir" != "${testdir#/}" ] && echo "$testdir" || echo "$PWD/$testdir")"
 
-    if ! command -v bats &> /dev/null; then
-        sbpl_get 'archive' 'bats' '0.4.0' 'https://github.com/sstephenson/bats/archive/v${version}.zip' 'bin'
+    PATH="$PWD/$sbpl_dir_bins/current:$testdir:$PATH"
+
+    if [ -z ${2+x} ]; then
+        if ! command -v bats &> /dev/null; then
+            sbpl_get 'archive' 'bats' '0.4.0' 'https://github.com/sstephenson/bats/archive/v${version}.zip' 'bin'
+        fi
+        cmd="bats --tap ."
+    else
+        shift
+        cmd="$@"
     fi
 
-    [ -z ${1+x} ] && testdir="." || testdir="$1"
     pushd "$testdir" > /dev/null
+
+    bin=${cmd%% *}
+    if ! command -v $bin &> /dev/null; then
+        printf "unknown command '$bin'\n"
+        exit 2
+    fi
 
     # Loop through test folders
     for subdir in test*/; do
@@ -410,7 +424,7 @@ function sbpl_test () {
         printf "[${subdir%/}]\n"
 
         pushd "./$subdir" > /dev/null
-            bats --tap .
+            $cmd
         popd > /dev/null
 
         printf "\n"
