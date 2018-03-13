@@ -90,15 +90,15 @@ Note: If the archive contains a root folder `${name}-${version}` the content of 
 
 `get` - Download a package via shell. The syntax for this command is the same as sbpl_get
 
-`test` - Runs tests with [bats](https://github.com/sstephenson/bats)
+`test` - Runs tests
 
 If called without further arguments `/sbpl.sh` will download packages if needed.
 
 ### Testing
 
-To test your package call `./sbpl.sh test <dir>` this will scan the provided dir (defaults to current dir) for folder which names start with test (test*/). `.bats` test files in these folders are exectued.
+To test your package call `./sbpl.sh test <dir> [<command>]` this will scan the provided dir (defaults to current dir) for folder which names start with "test".
 
-If `bats` is not present, sbpl will download it.
+The `<command>` defauls to [bats](https://github.com/sstephenson/bats). If `bats` is not present, it will be downloaded.
 
 ## API
 
