@@ -26,7 +26,6 @@ function mock_path () {
 
 @test "sbpl_mock_curl.bash" {
 
-    unset TEST_PACKGE
     unset TEST_EXPECTED_URL
 
     target="test.tar"
@@ -52,8 +51,8 @@ function mock_path () {
     rm -f $target
 
     # Check if zip is created from folder
-    export TEST_PACKGE="package/test"
-    run curl 0 "test-url" 0 "$target"
+    export TEST_EXPECTED_URL="package/test"
+    curl 0 "package/test" 0 "$target"
     [ -f "$target" ]
 
     # Extract archive

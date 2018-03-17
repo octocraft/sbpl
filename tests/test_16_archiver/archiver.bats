@@ -22,8 +22,8 @@ function teardown () {
 
 function curl () {
     if [ "${2%.*}" = "archive" ]; then
-        export TEST_PACKGE="package/link"
-        ./sbpl_mock_curl.bash $@
+        _1="$1"; _2="package/link.tar"; shift 2;
+        ./sbpl_mock_curl.bash $_1 $_2 $@
     else
         command -p curl $@
     fi

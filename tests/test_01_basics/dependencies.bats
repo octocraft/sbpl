@@ -42,13 +42,12 @@ function teardown () {
 @test "no zip (curl)" {
 
     function curl () {
-        export TEST_PACKGE="package/test"
         ./sbpl_mock_curl.bash $@
     }
 
     export -f curl
 
-    sbpl-pkg "archive" "archive.zip"
+    sbpl-pkg "archive" "package/test.zip"
 
     run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
@@ -63,12 +62,11 @@ function teardown () {
 @test "no zip (wget)" {
 
     function wget () {
-        export TEST_PACKGE="package/test"
         ./sbpl_mock_curl.bash -fsSL "$4" -o "$3"
     }
 
     export -f wget
-    sbpl-pkg "archive" "archive.zip"
+    sbpl-pkg "archive" "package/test.zip"
 
     run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2

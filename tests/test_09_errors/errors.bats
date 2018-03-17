@@ -14,7 +14,7 @@ function teardown () {
 }
 
 function sbpl-pkg () {
-    printf "#!/bin/bash\n\nsbpl_get '$1' 'test' '0.0.0' 'test-0.0.0$2' './'" > sbpl-pkg.sh
+    printf "#!/bin/bash\n\nsbpl_get '$1' 'test' '0.0.0' 'package/test$2' './'" > sbpl-pkg.sh
     chmod u+x sbpl-pkg.sh
 }
 
@@ -35,7 +35,7 @@ function sbpl-pkg () {
     [ "$status" -eq 42 ]
     [ "${lines[0]}" = "Get package: $sbpl_os/$sbpl_arch/test-0.0.0" ]
     [ "${lines[1]}" = "CURL-TEST-ERROR" ]
-    [ "${lines[2]}" = "Error while downloading 'test-0.0.0'" ]
+    [ "${lines[2]}" = "Error while downloading 'package/test'" ]
     [ "${lines[3]}" = "'sbpl-pkg.sh' failed with status 42" ]
 
     unset curl
@@ -46,7 +46,6 @@ function sbpl-pkg () {
     sbpl-pkg "archive" ".tar"
 
     function curl () {
-        export TEST_PACKGE="package/test"
         ./sbpl_mock_curl.bash $@
     }
 
@@ -86,7 +85,7 @@ function sbpl-pkg () {
     [ "$status" -eq 44 ]
     [ "${lines[0]}" = "Get package: $sbpl_os/$sbpl_arch/test-0.0.0" ]
     [ "${lines[1]}" = "GIT-CLONE-TEST-ERROR" ]
-    [ "${lines[2]}" = "Error while cloning repo 'test-0.0.0'" ]
+    [ "${lines[2]}" = "Error while cloning repo 'package/test'" ]
     [ "${lines[3]}" = "'sbpl-pkg.sh' failed with status 44" ]
 }
 

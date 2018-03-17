@@ -4,13 +4,12 @@ current_os="$(./sbpl.sh envvars _sbpl_os)"
 current_arch="$(./sbpl.sh envvars _sbpl_arch)"
 
 function curl () {
-    export TEST_PACKGE="package/test"
     ./sbpl_mock_curl.bash $@
 }
 
 function test_sbpl_mock_curl () {
     target="test-0.0.0"
-    export TEST_EXPECTED_URL="$target.tar"
+    export TEST_EXPECTED_URL="package/test.tar"
     export -f curl
     run ./sbpl.sh $@
     echo "status: $status" 1>&2
@@ -62,6 +61,6 @@ function teardown () {
 @test "sbpl get" {
     export sbpl_os=linux
     export sbpl_arch=arm
-    test_sbpl_mock_curl "get" "archive" "test" "0.0.0" "test-0.0.0.tar" "./"
+    test_sbpl_mock_curl "get" "archive" "test" "0.0.0" "package/test.tar" "./"
 }
 

@@ -10,9 +10,11 @@ if ! [ -z ${TEST_EXPECTED_URL+x} ]; then
     fi
 fi
 
-if ! [ -z ${TEST_PACKGE+x} ]; then
+src="${url%%.*}"
+
+if [ -d "$src" ]; then
     # Create tar from folder
-    command -p tar -C "$TEST_PACKGE" -cf "$dest" '.'
+    command -p tar -C "$src" -cf "$dest" '.'
 else
     # Empty tar
     command -p tar cvf "$dest" --files-from /dev/null
