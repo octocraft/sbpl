@@ -29,7 +29,7 @@ function sbpl-pkg () {
     [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 
     # Check lock file
-    [ -f "sbpl-pkg.sh.lock-linux-amd64" ]
+    [ -f "vendor/sbpl-pkg.sh.lock-linux-amd64" ]
 }
 
 @test "dont download pkg" {
@@ -82,7 +82,7 @@ function sbpl-pkg () {
     [ -f "vendor/$sbpl_os/$sbpl_arch/test-0.0.0/test" ]
 
     # Check lock file
-    [ -f "sbpl-pkg.sh.lock-windows-386" ]
+    [ -f "vendor/sbpl-pkg.sh.lock-windows-386" ]
 }
 
 @test "remove lock file on error" {
@@ -99,8 +99,8 @@ function sbpl-pkg () {
     [ "${lines[1]}" = "'sbpl-pkg.sh' failed with status 42" ]
 
     # check pkg
-    [   -f "sbpl-pkg.sh.lock-windows-386" ]
-    [ ! -f "sbpl-pkg.sh.lock-linux-amd64" ]
+    [   -f "vendor/sbpl-pkg.sh.lock-windows-386" ]
+    [ ! -f "vendor/sbpl-pkg.sh.lock-linux-amd64" ]
 }
 
 @test "do not create lock file on error" {
@@ -109,8 +109,8 @@ function sbpl-pkg () {
     run ./sbpl.sh
 
     # check pkg
-    [   -f "sbpl-pkg.sh.lock-windows-386" ]
-    [ ! -f "sbpl-pkg.sh.lock-linux-amd64" ]
+    [   -f "vendor/sbpl-pkg.sh.lock-windows-386" ]
+    [ ! -f "vendor/sbpl-pkg.sh.lock-linux-amd64" ]
 
     # clean
     rm -rf vendor
