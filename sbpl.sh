@@ -366,13 +366,13 @@ function sbpl_get () {
 
 function get_packages () {
 
-    sbpl_pkg_lock="$sbpl_pkg.lock-$sbpl_os-$sbpl_arch"
+    sbpl_pkg_lock="$sbpl_dir_pkgs/$sbpl_pkg.lock-$sbpl_os-$sbpl_arch"
 
     # Check pkg file
-    if [ -f "$PWD/$sbpl_pkg" ]; then
+    if [ -f "$sbpl_pkg" ]; then
 
         # Check lock file & skip update if no changes
-        if [ -f "$PWD/$sbpl_pkg_lock" ] && [ "$(< "$PWD/$sbpl_pkg")" = "$(< "$PWD/$sbpl_pkg_lock")" ]; then
+        if [ -f "$sbpl_pkg_lock" ] && [ "$(< "$sbpl_pkg")" = "$(< "$sbpl_pkg_lock")" ]; then
             return 0
         fi
 
@@ -381,13 +381,14 @@ function get_packages () {
         result=${PIPESTATUS[0]}
 
         # Clear tmp
-        rm -rf "$PWD/$sbpl_dir_tmps/*"
+        rm -rf "$sbpl_dir_tmps/*"
 
         # Update lock file
         if [ $result -eq 0 ]; then
-            cp -p "$PWD/$sbpl_pkg" "$PWD/$sbpl_pkg_lock"
+            mkdir -p "$sbpl_dir_pkgs"
+            cp -p "$sbpl_pkg" "$sbpl_pkg_lock"
         else
-            rm -f "$PWD/$sbpl_pkg_lock"
+            rm -f "$sbpl_pkg_lock"
             printf "'sbpl-pkg.sh' failed with status $result\n"
             return $result
         fi
@@ -471,7 +472,7 @@ function unknown_option () {
 
 function clean () {
 
-    rm -rf $PWD/$sbpl_pkg.lock* $PWD/$sbpl_dir_pkgs && mkdir -p $PWD/$sbpl_dir_pkgs
+    rm -rf $sbpl_dir_pkgs && mkdir -p $sbpl_dir_pkgs
     return $?
 }
 
