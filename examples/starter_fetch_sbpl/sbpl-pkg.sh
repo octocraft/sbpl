@@ -1,1 +1,1 @@
-../../tests/test_03_init/sbpl-pkg.sh.base
+../../tests/test_003_init/sbpl-pkg.sh.base
