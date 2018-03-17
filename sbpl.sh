@@ -346,6 +346,14 @@ function sbpl_get () {
             # Create Package link
             ln -fs "$pkg" "$sbpl_dir_pkg/$name"
 
+            # Get sub packages
+            if [ -z ${SBPL_NOSUBPKGS+x} ] || ! $SBPL_NOSUBPKGS; then
+                pkg_pkgs="$pkg_dir/$sbpl_pkg"
+                if [ -f "$pkg_pkgs" ]; then
+                    source "$pkg_pkgs"
+                fi
+            fi
+
         else
             rm -rf $pkg_dir
         fi
