@@ -4,7 +4,6 @@ current_os="$(./sbpl.sh envvars _sbpl_os)"
 current_arch="$(./sbpl.sh envvars _sbpl_arch)"
 
 function curl () {
-    export TEST_PACKGE="package/root-test"
     ./sbpl_mock_curl.bash $@
 }
 
@@ -15,13 +14,12 @@ function setup () {
 }
 
 function teardown () {
-#    rm -rf vendor
-a=1
+    rm -rf vendor
 }
 
 @test "move" {
 
-    ./sbpl.sh get 'archive' 'name' 'version' 'url.tar' './'
+    ./sbpl.sh get 'archive' 'name' 'version' 'package/root-test.tar' './'
 
     [   -f "vendor/$current_os/$current_arch/name-version/foo" ]
     [   -f "vendor/$current_os/$current_arch/name-version/test/bar" ]
@@ -33,7 +31,7 @@ a=1
 
 @test "don't move" {
     
-    ./sbpl.sh get 'archive' 'name' 'master' 'url.tar' './name-version'
+    ./sbpl.sh get 'archive' 'name' 'master' 'package/root-test.tar' './name-version'
 
     [ ! -d "vendor/$current_os/$current_arch/name-version" ]
     [   -f "vendor/$current_os/$current_arch/name-master/name-version/foo" ]

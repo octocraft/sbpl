@@ -4,7 +4,6 @@ export sbpl_os="linux"
 export sbpl_arch="amd64"
 
 function curl () {
-    export TEST_PACKGE="package/test"
     ./sbpl_mock_curl.bash $@
 }
 
@@ -12,7 +11,7 @@ export -f curl
 
 function sbpl-pkg () {
     printf "%s\n%s\n\n" "#!/bin/bash" "set -eu" > sbpl-pkg.sh
-    printf "%s\n" "sbpl_get 'archive' 'test' '0.0.0' 'test-0.0.0.tar'" >> sbpl-pkg.sh
+    printf "%s\n" "sbpl_get 'archive' 'test' '0.0.0' 'package/test.tar'" >> sbpl-pkg.sh
     chmod u+x sbpl-pkg.sh
 }
 

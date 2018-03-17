@@ -1,7 +1,6 @@
 #!/usr/bin/env bats
 
 function curl () {
-    export TEST_PACKGE="package/test"
     ./sbpl_mock_curl.bash $@
 }
 
@@ -17,14 +16,13 @@ function teardown () {
 @test "set sbpl_os/sbpl_arch - mixed" {
 
     target="test-0.0.0"
-    export TEST_EXPECTED_URL="$target.tar"
+    export TEST_EXPECTED_URL="package/test.tar"
     export -f curl
     run ./sbpl.sh $@
     echo "status: $status" 1>&2
     echo "output: $output" 1>&2
     [ "$status" -eq 0 ]
-    [ -d "vendor/windows/386/$target" ]
-    [ -d "vendor/linux/amd64/$target" ]
-
+    [ -f "vendor/windows/386/$target/test" ]
+    [ -f "vendor/linux/amd64/$target/test" ]
 }
 

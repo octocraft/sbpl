@@ -5,7 +5,6 @@ function tar () {
 }
 
 function curl () {
-    unset TEST_PACKGE
     $BATS_TEST_DIRNAME/sbpl_mock_curl.bash $@
 }
 

@@ -4,7 +4,6 @@ export sbpl_os="linux"
 export sbpl_arch="amd64"
 
 function curl () {
-    export TEST_PACKGE="package/test"
     ./sbpl_mock_curl.bash $@
 }
 
