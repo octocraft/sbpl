@@ -72,6 +72,10 @@ The packages are stored in `vendor/$sbpl_os/$sbpl_arch/${name}-${version}`. A li
 
 Note: If the archive contains a root folder `${name}-${version}` the content of this folder is used.
 
+### Sub-Packages
+
+If a dependency is downloaded, its source folder is checked for `sbpl-pkg.sh`. If present it is executed and sub-dependcies are downloaded. You can disable this behavior by `export SBPL_NOSUBPKGS=true`.
+
 ## Commands
 
 `help` - Prints usage information and a list of commands which may be used
