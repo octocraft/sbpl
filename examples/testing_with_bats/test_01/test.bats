@@ -2,7 +2,7 @@
 
 @test "output from test" {
     
-    run ../test
+    run ../foo
     [ "$status" -eq 0 ]
     [ "$output" = "foo" ]
 }

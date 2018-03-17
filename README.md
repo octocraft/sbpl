@@ -15,6 +15,9 @@ Just download `sbpl.sh` from the repository.
 wget https://raw.githubusercontent.com/octocraft/sbpl/master/sbpl.sh
 chmod u+x sbpl.sh
 ```
+
+If you dont want to include `sbpl` in your repo, have a look at the example section for a downloader script.
+
 ### Dependencies
 
 Though `sbpl` was developed with as little dependencies as possible, they cant be avoided. `sbpl` requires 
@@ -64,7 +67,7 @@ Via the `envvars` command `sbpl` returns the path to the bin dir. You can use th
 export PATH="$(./sbpl.sh envvars sbpl_path_bin):$PATH"
 ```
 
-You find a full example in [examples/blank](examples/blank).
+You find a full examples in the example section..
 
 ### Packages
 
@@ -169,15 +172,21 @@ Note: `url` and `bin-dir` are evaluated using eval. Use single quotes to access 
 
 ## Examples
 
-### [blank](examples/blank)
+### [starter_offline_sbpl](examples/starter_offline_sbpl)
 
-Boiler plate for your own setup
+Boiler plate for your own setup. This setup includes sbpl (use `sbpl upgrade` to get a new version).
 
 `run.sh` - The script which starts your application and makes all packages available to it
 
-### [testing-with-bats](examples/testing-with-bats)
+### [starter_fetch_sbpl](examples/starter_offline_sbpl)
 
-Sample setup for testing with bats
+Boiler plate for your own setup. This setup always fetches the latest sbpl from the repo.
+
+`run.sh` - The script which starts your application and makes all packages available to it
+
+### [testing_with_bats](examples/testing_with_bats)
+
+Sample setup for testing with bats.
 
 `foo` - The executable to test
 
