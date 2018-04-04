@@ -2,5 +2,5 @@
 set -eu
 
 if ! command -v 'foo'; then
-    sbpl_get 'archive' 'foo' '1.0.0' 'https://github.com/octocraft/${name}/raw/v${version}/dist/${name}.zip' './bin/${sbpl_os}/${sbpl_arch}'
+    sbpl_get 'file' 'foo' '1.0.0' 'https://github.com/octocraft/foo/releases/download/v1.0.0/foo_${sbpl_os}_${sbpl_arch}${sbpl_win_ext}' './'
 fi

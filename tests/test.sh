@@ -1,2 +1,2 @@
 #!/bin/bash
-./sbpl.sh test
+./../sbpl.sh test
