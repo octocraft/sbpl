@@ -38,6 +38,9 @@ function export_platform_info () {
         export sbpl_os="$_sbpl_os"
     fi
 
+    export _sbpl_win_ext="$([ _sbpl_os = "windows" ] && echo ".exe")"
+    export  sbpl_win_ext="$([  sbpl_os = "windows" ] && echo ".exe")"
+
     if [ "$sbpl_os" = "windows" ] && [ -z ${HOSTTYPE+x} ]; then
         if [ -z ${PROCESSOR_ARCHITEW6432+x} ]; then
             HOSTTYPE="$PROCESSOR_ARCHITEW6432"

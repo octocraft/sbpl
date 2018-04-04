@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - prevent double root dir
 - use custom test command
 - download sub packages
+- sbpl_win_ext to handle ".exe"
 ### Changed
 - Indicate progress while downloading
 - Lock current dirs to actual OS/ARCH
