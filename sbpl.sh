@@ -244,7 +244,14 @@ function sbpl_get () {
 
             filename="${url##*/}"
             extension="${filename##*.}"
+
+            if [ "$extension" = "gz" ]; then
+                compressed="${filename%.*}"
+                extension="${compressed##*.}.$extension"
+            fi
+
             extension="$([ -z "$extension" ] && echo "" || echo ".$extension")"
+
             tmpfile="$sbpl_dir_tmp/${pkg}$extension"
             mkdir -p "$sbpl_dir_tmp"
 

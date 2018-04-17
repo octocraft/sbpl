@@ -14,15 +14,21 @@ function sbpl-pkg () {
 
 target="vendor/$sbpl_os/$sbpl_arch/name-version"
 
+function setup () {
+    rm -rf vendor
+}
+
 function teardown () {
     rm -rf vendor
-    rm -rf dependencies
-    rm -f sbpl-pkg.sh*
 }
 
 function curl () {
-    if [ "${2%.*}" = "archive" ]; then
+    if [ "$2" = "archive.tar" ]; then
         _1="$1"; _2="package/link.tar"; shift 2;
+        ./sbpl_mock_curl.bash $_1 $_2 $@
+    elif [ "$2" = "archive.tar.gz" ]; then
+        _1="$1"; _2="package/link.tar.gz"; shift 2;
+        export MOCK_CURL_COMPRESS=1
         ./sbpl_mock_curl.bash $_1 $_2 $@
     else
         command -p curl $@
@@ -36,7 +42,7 @@ export -f curl
     sbpl-pkg "tar"
 
     mkdir -p dependencies
-    ln -s /bin/* dependencies
+    ln -fs /bin/* dependencies
     rm -f dependencies/tar
 
     run mock_path "$PWD/dependencies" "./sbpl.sh" "update"
@@ -46,6 +52,20 @@ export -f curl
 
     [ "$(./$target/foo.sh bar)" = "bar" ]
     [ "$(./$target/bin/foo bar)" = "bar" ]
-
 }
 
+@test "archiver tar.gz" {
+
+    sbpl-pkg "tar.gz"
+
+    run mock_path "$PWD/dependencies" "./sbpl.sh" "update"
+    echo "output: $output" 1>&2
+    echo "status: $status" 1>&2
+    [ "$status" -eq 0 ]
+
+    [ "$(./$target/foo.sh bar)" = "bar" ]
+    [ "$(./$target/bin/foo bar)" = "bar" ]
+
+    rm -rf dependencies
+    rm -f sbpl-pkg.sh*
+}

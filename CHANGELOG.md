@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Lock current dirs to actual OS/ARCH
 - Move lock file to vendor dir
 - Improve Examples / Testing Docs
+- Fix tar.gz handling
 
 ## [0.4.0] - 2018-03-03
 ### Added
