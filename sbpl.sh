@@ -245,7 +245,7 @@ function sbpl_get () {
             filename="${url##*/}"
             extension="${filename##*.}"
 
-            if [ "$extension" = "gz" ]; then
+            if [ "$extension" = "gz" ] || [ "$extension" = "xz" ]; then
                 compressed="${filename%.*}"
                 extension="${compressed##*.}.$extension"
             fi

@@ -28,7 +28,11 @@ function curl () {
         ./sbpl_mock_curl.bash $_1 $_2 $@
     elif [ "$2" = "archive.tar.gz" ]; then
         _1="$1"; _2="package/link.tar.gz"; shift 2;
-        export MOCK_CURL_COMPRESS=1
+        export MOCK_CURL_COMPRESS="gz"
+        ./sbpl_mock_curl.bash $_1 $_2 $@
+    elif [ "$2" = "archive.tar.xz" ]; then
+        _1="$1"; _2="package/link.tar.xz"; shift 2;
+        export MOCK_CURL_COMPRESS="xz"
         ./sbpl_mock_curl.bash $_1 $_2 $@
     else
         command -p curl $@
@@ -57,6 +61,21 @@ export -f curl
 @test "archiver tar.gz" {
 
     sbpl-pkg "tar.gz"
+
+    run mock_path "$PWD/dependencies" "./sbpl.sh" "update"
+    echo "output: $output" 1>&2
+    echo "status: $status" 1>&2
+    [ "$status" -eq 0 ]
+
+    [ "$(./$target/foo.sh bar)" = "bar" ]
+    [ "$(./$target/bin/foo bar)" = "bar" ]
+
+    rm -f sbpl-pkg.sh*
+}
+
+@test "archiver tar.xz" {
+
+    sbpl-pkg "tar.xz"
 
     run mock_path "$PWD/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2

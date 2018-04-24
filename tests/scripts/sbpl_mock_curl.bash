@@ -6,7 +6,13 @@ dest="$4"
 if [ -z ${MOCK_CURL_COMPRESS+x} ]; then
     curl_params="-cf"
 else
-    curl_params="-czf"
+    if [ "$MOCK_CURL_COMPRESS" = "gz" ]; then
+        curl_params="-czf"
+    fi
+
+    if [ "$MOCK_CURL_COMPRESS" = "xz" ]; then
+        curl_params="-cJf"
+    fi
 fi
 
 if ! [ -z ${TEST_EXPECTED_URL+x} ]; then
