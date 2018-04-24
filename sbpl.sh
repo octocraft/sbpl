@@ -244,9 +244,11 @@ function sbpl_get () {
 
             filename="${url##*/}"
             extension="${filename##*.}"
+            basename="${filename%.*}"
 
             if [ "$extension" = "gz" ] || [ "$extension" = "xz" ]; then
                 compressed="${filename%.*}"
+                basename="${compressed%.*}"
                 extension="${compressed##*.}.$extension"
             fi
 
@@ -275,9 +277,14 @@ function sbpl_get () {
                         printf "Error while extracting '%s'\n" "$tmpfile" 1>&2
                     fi
 
-                    # If packeg is in dir "name-version", remove it
-                    pkg_dir_sub=$pkg_dir/$pkg
-                    if [ -d "$pkg_dir_sub" ] && [ "$(echo $pkg_dir/*/)" = "$pkg_dir_sub/" ]; then
+                    # If packeg is in dir "name-version" or "filename", remove it
+                    pkg_dir_sub=""
+                    pkg_dir_sub1="$pkg_dir/$pkg"
+                    pkg_dir_sub2="$pkg_dir/$basename"
+                    [ -d "$pkg_dir_sub1" ] && [ "$(echo $pkg_dir/*/)" = "$pkg_dir_sub1/" ] && pkg_dir_sub="$pkg_dir_sub1"
+                    [ -d "$pkg_dir_sub2" ] && [ "$(echo $pkg_dir/*/)" = "$pkg_dir_sub2/" ] && pkg_dir_sub="$pkg_dir_sub2"
+
+                    if [ ! -z "$pkg_dir_sub" ]; then
                         printf "move %s -> %s\n" "$pkg_dir_sub" "$pkg_dir"
                         tmpdir=$sbpl_dir_tmp/$pkg
                         rm -rf $tmpdir

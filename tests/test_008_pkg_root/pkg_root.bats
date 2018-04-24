@@ -17,13 +17,27 @@ function teardown () {
     rm -rf vendor
 }
 
-@test "move" {
+@test "move name-version" {
 
     ./sbpl.sh get 'archive' 'name' 'version' 'package/root-test.tar' './'
 
     [   -f "vendor/$current_os/$current_arch/name-version/foo" ]
     [   -f "vendor/$current_os/$current_arch/name-version/test/bar" ]
     [ ! -d "vendor/$current_os/$current_arch/name-version/name-version" ]
+
+    [ -f "vendor/bin/$current_os/$current_arch/foo" ]
+    [ -f "vendor/bin/current/foo" ]
+}
+
+@test "move filename" {
+
+    ./sbpl.sh get 'archive' 'abc' '123' 'package/name-version.tar' './'
+
+    find "vendor/$current_os/$current_arch"
+
+    [   -f "vendor/$current_os/$current_arch/abc-123/foo" ]
+    [   -f "vendor/$current_os/$current_arch/abc-123/test/bar" ]
+    [ ! -d "vendor/$current_os/$current_arch/abc-123/name-version" ]
 
     [ -f "vendor/bin/$current_os/$current_arch/foo" ]
     [ -f "vendor/bin/current/foo" ]
