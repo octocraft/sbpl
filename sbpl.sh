@@ -193,24 +193,29 @@ function sbpl_get () {
     # Check number of arguments
     if [ "$#" -lt 4 ]; then sbpl_usage; return 2; fi
 
-    # Check how we fetch data
-    if has_command "curl"; then
-        function fetch () { curl -fSL# "$1" -o "$2"; }
-    elif has_command "wget"; then
-       function fetch () { wget --progress=bar -O "$2" "$1"; }
-    else
-        printf "Neither 'curl' nor 'wget' found\n" 1>&2
-        exit 2
-    fi
-
     # Check target
     target="$1"
     case "$target" in
-        file)                                           ;;
-        archive)                                        ;;
-        git)        check_dependency git                ;;
-        *)          printf "Unknown option $target\n" 1>&2
-                    sbpl_usage; return 2;               ;;
+
+        file | archive)                
+            if has_command "curl"; then
+                function fetch () { curl -fSL# "$1" -o "$2"; }
+            elif has_command "wget"; then
+            function fetch () { wget --progress=bar -O "$2" "$1"; }
+            else
+                printf "Neither 'curl' nor 'wget' found\n" 1>&2
+                exit 2
+            fi
+        ;;
+
+        git)        
+            check_dependency git                
+        ;;
+        
+        *)          
+            printf "Unknown option $target\n" 1>&2
+            sbpl_usage; return 2;               
+        ;;
     esac
 
     # Process arguments
