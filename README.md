@@ -1,8 +1,7 @@
 # sbpl
 
 [![Software License][ico-license]](LICENSE.md)
-[![Build Status][ico-travis]][link-travis]
-[![Build status](https://ci.appveyor.com/api/projects/status/github/octocraft/sbpl)](https://ci.appveyor.com/project/peterpostmann/sbpl)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/octocraft/sbpl?svg=true)](https://ci.appveyor.com/project/peterpostmann/sbpl)
 
 Simple Bash Package Loader
 
