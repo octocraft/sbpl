@@ -115,19 +115,30 @@ function sbpl_get () {
                 }
 
                 case "$src" in
-                    *.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar)
-                                run tar xvf "$src"     ;;
+                    *.cbt|*.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar)
+                                run tar xvf "$src"       ;;
                     *.lzma)     run unlzma "$src"      ;;
                     *.bz2)      run bunzip2 "$src"     ;;
-                    *.rar)      run unrar x -ad "$sc"  ;;
+                    *.cbr|*.rar) 
+                                run unrar x -ad "$src" ;;
                     *.gz)       run gunzip "$src"      ;;
-                    *.zip)      run unzip "$src"       ;;
+                    *.cbz|*.epub|*.zip) 
+                                run unzip "$src"       ;;
                     *.z)        run uncompress "$src"  ;;
-                    *.7z|*.arj|*.cab|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.rpm|*.udf|*.wim|*.xar)
+                    *.7z|*.apk|*.arj|*.cab|*.cb7|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.pkg|*.rpm|*.udf|*.wim|*.xar)
                                 run 7z x "$src"        ;;
                     *.xz)       run unxz "$src"        ;;
                     *.exe)      run cabextract "$src"  ;;
-                    *)          return 127             ;;
+                    *.cpio)     run cpio -id < "$src"  ;;
+                    *.cba|*.ace) 
+                                run unace x "$src"     ;;
+                    *.zpaq)     run zpaq x "$src"      ;;
+                    *.arc)      run arc e "$src"       ;;
+                    *.cso)      run ciso 0 "$src" "$src.iso" && \
+                                run extract "$src.iso" && run rm -f "$src" ;;
+                    *.zlib)     run zlib-flate -uncompress < "$src" > "$src.tmp" && \
+                                run mv "$src.tmp" "${n%.*zlib}" && run rm -f "$src"   ;;
+                    *)          return 127               ;;
                 esac
             }
 
