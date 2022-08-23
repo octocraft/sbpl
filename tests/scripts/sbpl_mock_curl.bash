@@ -29,7 +29,7 @@ if [ -d "$src" ]; then
     command -p tar -C "$src" $curl_params "$dest" '.'
 else
     # Empty tar
-    command -p tar $curl_params "$dest" --files-from /dev/null
+    command -p tar "$curl_params" "$dest" --files-from /dev/null
 fi
 
 exit 0
