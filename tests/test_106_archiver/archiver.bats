@@ -60,6 +60,8 @@ export -f curl
 
 @test "archiver tar.gz" {
 
+    ln -sf "$(command -v gzip)" dependencies/gzip
+
     sbpl-pkg "tar.gz"
 
     run mock_path "$PWD/dependencies" "./sbpl.sh" "update"
@@ -72,6 +74,8 @@ export -f curl
 }
 
 @test "archiver tar.xz" {
+
+    ln -sf "$(command -v xz)" dependencies/xz
 
     sbpl-pkg "tar.xz"
 
