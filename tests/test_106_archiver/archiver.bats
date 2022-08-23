@@ -23,6 +23,7 @@ function setup () {
 function teardown () {
     rm -rf vendor
     rm -rf dependencies
+    rm -f sbpl-pkg.sh*
 }
 
 function curl () {
@@ -48,7 +49,6 @@ export -f curl
 
     sbpl-pkg "tar"
 
-
     run mock_path "$PWD/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
@@ -69,8 +69,6 @@ export -f curl
 
     [ "$(./$target/foo.sh bar)" = "bar" ]
     [ "$(./$target/bin/foo bar)" = "bar" ]
-
-    rm -f sbpl-pkg.sh*
 }
 
 @test "archiver tar.xz" {
@@ -84,7 +82,4 @@ export -f curl
 
     [ "$(./$target/foo.sh bar)" = "bar" ]
     [ "$(./$target/bin/foo bar)" = "bar" ]
-
-    rm -rf dependencies
-    rm -f sbpl-pkg.sh*
 }
