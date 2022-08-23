@@ -3,6 +3,6 @@ image:
 - Ubuntu
 - macOS
 build_script:
-- sh: cd tests && echo "$APPVEYOR_BUILD_WORKER_IMAGE" && if [[ "$APPVEYOR_BUILD_WORKER_IMAGE" == "Ubuntu" ]]; then sudo apt-get update && sudo apt-get install -y curl libarchive-tools xz git; fi;
+- sh: cd tests && echo "$APPVEYOR_BUILD_WORKER_IMAGE" && if [[ "$APPVEYOR_BUILD_WORKER_IMAGE" == "Ubuntu" ]]; then sudo apt-get update && sudo apt-get install -y curl libarchive-tools xz-utils git; fi;
 test_script:
 - sh: ./test.sh
