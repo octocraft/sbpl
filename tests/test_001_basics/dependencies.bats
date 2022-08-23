@@ -20,6 +20,9 @@ export -f archiver
 
 function setup () {
     mkdir -p dependencies
+    ln -s "$(command -v cat)" dependencies/cat
+    ln -s "$(command -v rm)" dependencies/rm
+    ln -s "$(command -v mkdir)" dependencies/mkdir
 }
 
 function teardown () {
@@ -29,29 +32,32 @@ function teardown () {
 }
 
 @test "no curl and no wget" {
-
+    
     sbpl-pkg "file" "file"
 
-    run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
+    run mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
+    unset command
     [ "$status" -eq 2 ]
     [ "${lines[0]}" = "Neither 'curl' nor 'wget' found" ]
 }
 
 @test "no zip (curl)" {
 
+
     function curl () {
         ./sbpl_mock_curl.bash $@
-    }
+    };
 
     export -f curl
 
     sbpl-pkg "archive" "package/test.zip"
 
-    run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
+    run mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
+    unset command
     [ "$status" -eq 127 ]
     [ "${lines[0]}" = "Get package: linux/amd64/0-0" ]
     [ "${lines[1]}" = "No suitable tool to extract archive found" ]
@@ -63,12 +69,13 @@ function teardown () {
 
     function wget () {
         ./sbpl_mock_curl.bash -fsSL "$4" -o "$3"
-    }
+    };
 
     export -f wget
+
     sbpl-pkg "archive" "package/test.zip"
 
-    run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
+    run mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 127 ]
@@ -82,13 +89,12 @@ function teardown () {
 
     sbpl-pkg "git" "repo"
 
-    ln -s $(command -v bsdtar) dependencies/bsdtar
-    ln -s $(command -v curl) dependencies/curl
+    ln -s "$(command -v bsdtar)" dependencies/bsdtar
+    ln -s "$(command -v curl)" dependencies/curl
 
-    run mock_path "/bin:$(pwd)/dependencies" "./sbpl.sh" "update"
+    run mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 127 ]
     [ "${lines[0]}" = "Dependency 'git' not found" ]
 }
-
