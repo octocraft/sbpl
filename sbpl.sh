@@ -148,23 +148,28 @@ function sbpl_get () {
             set -e
         popd > /dev/null
 
-        if [ "$result" -eq 127 ]; then # command not found | unknown archive method
+        # command not found | unknown archive method
+        if [ "$result" -eq 127 ] && [ -z "${SBPL_NOARCHIVERFALLBACK+x}" ] ; then           
 
             bin_name=''
 
             case "$src" in
                 *.zip|*.tar|*.tar.gz|*.tgz|*.tar.bz2|*.tbz2|*.tar.xz|*.txz|*.tar.lz4|*.tlz4|*.tar.sz|*.tsz|*.rar)
-                        bin_name='archiver'
-                        bin_ver='2.0.1'
-                        # currently there is a bug in archiver, that symlinks are not created correctly.
-                        # bin_url="https://github.com/mholt/$bin_name/releases/download/v$bin_ver/${bin_name}_${bin_os}_${_sbpl_arch}"
-                        bin_url='https://github.com/peterpostmann/${name}/releases/download/v${version}/${name}_${sbpl_os}_${sbpl_arch}'
+                        bin_name='arc'
+                        bin_ver='3.5.0'
+                        bin_url='https://github.com/mholt/archiver/releases/download/v${bin_ver}/${bin_name}_${bin_ver}_${sbpl_os}_${sbpl_arch}'
                         bin_bin='./'
+                        bin_cmd='unarchive'
+
+                        if [ "$_sbpl_os" = "darwin" ]; then
+                            bin_url='https://github.com/mholt/archiver/releases/download/v${bin_ver}/${bin_name}_${bin_ver}_mac_${sbpl_arch}'
+                        fi
+
                         ;;
                 *)      ;;
             esac
 
-            if [ ! -z "$bin_name" ]; then
+            if [ ! -z "${bin_name+x}" ]; then
                 set +e
                 (
                     set -e
@@ -173,11 +178,11 @@ function sbpl_get () {
                     sbpl_os="$_sbpl_os"
                     sbpl_arch="$_sbpl_arch"
 
-                    if ! has_command archiver; then
+                    if ! has_command "$bin_name"; then
                         get_pkg 'file' "$bin_name" "$bin_ver" "$bin_url" "$bin_bin"
                     fi
 
-                    archiver open "$src" "$dst"
+                    $bin_name "$bin_cmd" "$src" "$dst"
                 )
                 [ "$?" -eq 0 ] && result=0
                 set -e
@@ -380,7 +385,7 @@ function sbpl_get () {
             ln -fs "$pkg" "$sbpl_dir_pkg/$name"
 
             # Get sub packages
-            if [ -z ${SBPL_NOSUBPKGS+x} ] || ! $SBPL_NOSUBPKGS; then
+            if [ -z "${SBPL_NOSUBPKGS+x}" ]; then
                 pkg_pkgs="$pkg_dir/$sbpl_pkg"
                 if [ -f "$pkg_pkgs" ]; then
                     source "$pkg_pkgs"

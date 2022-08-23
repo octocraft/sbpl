@@ -18,6 +18,7 @@ function setup () {
     mkdir -p dependencies
     ln -fs /bin/* dependencies
     rm -f dependencies/curl
+    ln -sf "$(command -v tar)" dependencies/tar
 }
 
 function teardown () {
@@ -45,7 +46,9 @@ function curl () {
 
 export -f curl
 
-@test "archiver tar" {
+@test "extract tar" {
+
+    export SBPL_NOARCHIVERFALLBACK=1
 
     sbpl-pkg "tar"
 
@@ -58,7 +61,9 @@ export -f curl
     [ "$(./$target/bin/foo bar)" = "bar" ]
 }
 
-@test "archiver tar.gz" {
+@test "extract tar.gz" {
+
+    export SBPL_NOARCHIVERFALLBACK=1
 
     ln -sf "$(command -v gzip)" dependencies/gzip
 
@@ -73,7 +78,9 @@ export -f curl
     [ "$(./$target/bin/foo bar)" = "bar" ]
 }
 
-@test "archiver tar.xz" {
+@test "extract tar.xz" {
+
+    export SBPL_NOARCHIVERFALLBACK=1
 
     ln -sf "$(command -v xz)" dependencies/xz
 
@@ -87,3 +94,21 @@ export -f curl
     [ "$(./$target/foo.sh bar)" = "bar" ]
     [ "$(./$target/bin/foo bar)" = "bar" ]
 }
+
+@test "fallback" {
+
+    unset SBPL_NOARCHIVERFALLBACK
+
+    rm dependencies/tar
+
+    sbpl-pkg "tar"
+
+    run mock_path "$PWD/dependencies" "./sbpl.sh" "update"
+    echo "output: $output" 1>&2
+    echo "status: $status" 1>&2
+    [ "$status" -eq 0 ]
+
+    [ "$(./$target/foo.sh bar)" = "bar" ]
+    [ "$(./$target/bin/foo bar)" = "bar" ]
+}
+

@@ -12,11 +12,11 @@ function sbpl-pkg () {
     chmod u+x sbpl-pkg.sh
 }
 
-function archiver () {
-    exit 2
+function arc () {
+    exit 127
 }
 
-export -f archiver
+export -f arc
 
 function setup () {
     mkdir -p dependencies
