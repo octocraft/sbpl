@@ -12,10 +12,6 @@ function teardown () {
 
 @test "archiver zip" {
 
-    mkdir -p dependencies
-    ln -s "$(command -v curl)" dependencies
-    ln -s "$(command -v wget)" dependencies
-
     run mock_path "/bin:$PWD/dependencies" "./sbpl.sh" "get" "archive" "sbpl" "master" 'https://github.com/octocraft/${name}/archive/${version}.zip'
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2

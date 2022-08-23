@@ -15,11 +15,14 @@ function sbpl-pkg () {
 target="vendor/$sbpl_os/$sbpl_arch/name-version"
 
 function setup () {
-    rm -rf vendor
+    mkdir -p dependencies
+    ln -fs /bin/* dependencies
+    rm -f dependencies/curl
 }
 
 function teardown () {
     rm -rf vendor
+    rm -rf dependencies
 }
 
 function curl () {
@@ -45,9 +48,6 @@ export -f curl
 
     sbpl-pkg "tar"
 
-    mkdir -p dependencies
-    ln -fs /bin/* dependencies
-    rm -f dependencies/tar
 
     run mock_path "$PWD/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2

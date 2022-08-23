@@ -20,9 +20,8 @@ export -f archiver
 
 function setup () {
     mkdir -p dependencies
-    ln -s "$(command -v cat)" dependencies/cat
-    ln -s "$(command -v rm)" dependencies/rm
-    ln -s "$(command -v mkdir)" dependencies/mkdir
+    mkdir -p dependencies
+    ln -fs /bin/* dependencies
 }
 
 function teardown () {
@@ -33,18 +32,22 @@ function teardown () {
 
 @test "no curl and no wget" {
     
+    rm -f dependencies/wget
+    rm -f dependencies/curl
+
     sbpl-pkg "file" "file"
 
     run mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
-    unset command
     [ "$status" -eq 2 ]
     [ "${lines[0]}" = "Neither 'curl' nor 'wget' found" ]
 }
 
 @test "no zip (curl)" {
 
+    rm -f dependencies/unzip
+    rm -f dependencies/wget
 
     function curl () {
         ./sbpl_mock_curl.bash $@
@@ -57,7 +60,6 @@ function teardown () {
     run mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
-    unset command
     [ "$status" -eq 127 ]
     [ "${lines[0]}" = "Get package: linux/amd64/0-0" ]
     [ "${lines[1]}" = "No suitable tool to extract archive found" ]
@@ -66,6 +68,9 @@ function teardown () {
 }
 
 @test "no zip (wget)" {
+
+    rm -f dependencies/unzip
+    rm -f dependencies/curl
 
     function wget () {
         ./sbpl_mock_curl.bash -fsSL "$4" -o "$3"
@@ -87,10 +92,9 @@ function teardown () {
 
 @test "no git" {
 
-    sbpl-pkg "git" "repo"
+    rm -f dependencies/git
 
-    ln -s "$(command -v bsdtar)" dependencies/bsdtar
-    ln -s "$(command -v curl)" dependencies/curl
+    sbpl-pkg "git" "repo"
 
     run mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
