@@ -20,8 +20,9 @@ export -f archiver
 
 function setup () {
     mkdir -p dependencies
-    mkdir -p dependencies
-    ln -fs /bin/* dependencies
+    ln -s "$(command -v cat)" dependencies/cat
+    ln -s "$(command -v rm)" dependencies/rm
+    ln -s "$(command -v mkdir)" dependencies/mkdir
 }
 
 function teardown () {
@@ -91,8 +92,6 @@ function teardown () {
 }
 
 @test "no git" {
-
-    rm -f dependencies/git
 
     sbpl-pkg "git" "repo"
 
