@@ -1,5 +1,7 @@
 #!/usr/bin/env bats
 
+bats_require_minimum_version 1.5.0
+
 function mock_path () {
     ./sbpl_mock_path.bash $@
 }
@@ -38,10 +40,10 @@ function teardown () {
 
     sbpl-pkg "file" "file"
 
-    run mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
+    run -127 mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
-    [ "$status" -eq 2 ]
+    [ "$status" -eq 127 ]
     [ "${lines[0]}" = "Neither 'curl' nor 'wget' found" ]
 }
 
@@ -58,7 +60,7 @@ function teardown () {
 
     sbpl-pkg "archive" "package/test.zip"
 
-    run mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
+    run -127 mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 127 ]
@@ -81,7 +83,7 @@ function teardown () {
 
     sbpl-pkg "archive" "package/test.zip"
 
-    run mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
+    run -127 mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 127 ]
@@ -95,7 +97,7 @@ function teardown () {
 
     sbpl-pkg "git" "repo"
 
-    run mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
+    run -127 mock_path "$(pwd)/dependencies" "./sbpl.sh" "update"
     echo "output: $output" 1>&2
     echo "status: $status" 1>&2
     [ "$status" -eq 127 ]

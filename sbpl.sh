@@ -220,7 +220,7 @@ function sbpl_get () {
             function fetch () { wget --progress=bar -O "$2" "$1"; }
             else
                 printf "Neither 'curl' nor 'wget' found\n" 1>&2
-                exit 2
+                exit 127
             fi
         ;;
 
@@ -447,7 +447,7 @@ function sbpl_test () {
 
     if [ -z ${2+x} ]; then
         if ! command -v bats &> /dev/null; then
-            sbpl_get 'archive' 'bats' '0.4.0' 'https://github.com/sstephenson/bats/archive/v${version}.zip' 'bin'
+            sbpl_get 'archive' 'bats' 'core-1.7.0' 'https://github.com/bats-core/bats-core/archive/refs/tags/v1.7.0.zip' 'bin'
         fi
         cmd="bats --tap ."
     else
