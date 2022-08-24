@@ -2,7 +2,7 @@
 set -eu
 
 sbpl_name="Simple Bash Package Loader"
-export sbpl_version="0.4.0"
+export sbpl_version="0.4.2"
 
 export sbpl=$0
 export sbpl_pkg="sbpl-pkg.sh"
